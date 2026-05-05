@@ -174,6 +174,10 @@
   .day-detail-val.loss { color: var(--red); }
   .day-detail-val.warning { color: var(--amber); }
   .day-detail-val.info { color: var(--blue); }
+  .day-detail-val.neutral { color: #334155; }
+  .day-detail-val.teal   { color: #0f766e; }
+  .day-detail-val.slate  { color: #475569; }
+  .day-detail-val.purple { color: #6d28d9; }
   .no-data { text-align: center; padding: 32px; color: var(--text-muted); font-size: 13px; background: var(--bg-card); border-radius: 12px; border: 0.5px dashed rgba(0,0,0,0.12); }
 
   /* ── Edit Modal ── */
@@ -195,11 +199,43 @@
   /* Print styles for PDF */
   @media print {
     .tab-bar, .add-btn, .session-tag .remove, .session-tag .edit-btn, .clear-btn, .pdf-btn, .dl-btn, .action-row, .day-edit-btn { display: none !important; }
-    body { padding: 0; background: white; }
+    body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .page { display: block !important; max-width: 100%; }
     .card, .month-accordion { box-shadow: none; }
     .month-days { display: block !important; }
     .day-details { display: block !important; }
+    .field input {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      background: #f3f4f6 !important;
+      background-color: #f3f4f6 !important;
+      border: 1px solid rgba(15,23,42,0.10) !important;
+      border-radius: 8px !important;
+      padding: 10px 12px !important;
+    }
+    .metric, .cal-metric, .batt-box, .batt-block {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .metric.m-profit  { background: #f0fdf4 !important; }
+    .metric.m-loss    { background: #fef2f2 !important; }
+    .metric.m-neutral { background: #f3f4f6 !important; }
+    .metric.m-charge  { background: #eff6ff !important; }
+    .metric.m-purple  { background: #f5f3ff !important; }
+    .session-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #f3f4f6 !important; }
+    .day-bar-fill, .month-bar-strip-fill, .batt-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .batt-block { background: #f8fafc !important; }
+    .day-details { background: #f8fafc !important; }
+    /* Bold text only — no colour changes */
+    body, .card, .metric, .stat-row, .field label,
+    .section-label, .batt-title, .batt-box-label,
+    .day-detail-label, .month-name-big, .month-pill,
+    .cal-metric .lbl, .cal-metric .sub, .profit-sub,
+    .header-title, .header-sub, .session-tag,
+    .s-cost, .s-miles, .s-batt, .field input { font-weight: 600 !important; }
+    .profit-amount, .stat-val, .metric-value, .batt-box-val,
+    .day-amount, .day-earn, .month-total, .cal-metric .val,
+    .year-label, .day-date, .profit-badge, .day-detail-val { font-weight: 700 !important; }
   }
 </style>
 </head>
@@ -678,10 +714,12 @@ function buildYearData(year) {
     const mk = m - 1;
     if (!byMonth[mk]) byMonth[mk] = { total:0, sessions:0, earnings:0, profit:0 };
     byMonth[mk].total += c.cost || 0; byMonth[mk].sessions++;
-    if (!byDay[c.date]) byDay[c.date] = { total:0, sessions:0, miles:0, batt:[] };
+    if (!byDay[c.date]) byDay[c.date] = { total:0, sessions:0, miles:0, batt:[], milesBefore:null, milesAfter:null };
     byDay[c.date].total += c.cost || 0; byDay[c.date].sessions++;
     byDay[c.date].miles += c.mileage || 0;
     if (c.battBefore != null) byDay[c.date].batt.push({ before:c.battBefore, after:c.battAfter });
+    if (c.milesBefore != null && byDay[c.date].milesBefore === null) byDay[c.date].milesBefore = c.milesBefore;
+    if (c.milesAfter != null) byDay[c.date].milesAfter = c.milesAfter;
   });
   Object.keys(byDay).forEach(date => {
     const [,m] = date.split('-').map(Number);
@@ -750,12 +788,26 @@ function renderCalendar() {
       </div>
       <div class="day-details">
         <div class="day-detail-row"><span class="day-detail-label">Earnings</span><span class="day-detail-val positive">£${dData.earnings.toFixed(2)}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">EV charging cost</span><span class="day-detail-val warning">£${dData.total.toFixed(2)}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Net profit</span><span class="day-detail-val ${profitTone}">£${dData.profit.toFixed(2)}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Sessions</span><span class="day-detail-val">${dData.sessions}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Miles added</span><span class="day-detail-val info">${dData.miles || 0} mi</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Cost per mile</span><span class="day-detail-val warning">${cpm}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Battery</span><span class="day-detail-val info">${battInfo}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">EV charging cost</span><span class="day-detail-val loss">£${dData.total.toFixed(2)}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Net profit</span><span class="day-detail-val info" style="font-size:13px;font-weight:700;">£${dData.profit.toFixed(2)}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Sessions</span><span class="day-detail-val neutral">${dData.sessions}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Mileage before</span><span class="day-detail-val warning">${dData.milesBefore != null ? dData.milesBefore.toLocaleString()+' mi' : '—'}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Miles added</span><span class="day-detail-val info">${dData.miles ? dData.miles+' mi' : '—'}</span></div>
+        <div class="day-detail-row">
+          <span class="day-detail-label">Mileage total</span>
+          <span style="font-family:'DM Mono',monospace;font-weight:700;color:#0f766e;">
+            ${(dData.milesBefore != null && dData.miles) ? (dData.milesBefore + dData.miles).toLocaleString()+' mi' : (dData.milesAfter != null ? dData.milesAfter.toLocaleString()+' mi' : '—')}
+          </span>
+        </div>
+        <div class="day-detail-row"><span class="day-detail-label">Cost per mile</span><span class="day-detail-val purple">${cpm}</span></div>
+        <div class="day-detail-row">
+          <span class="day-detail-label">Battery</span>
+          <span class="day-detail-val" style="font-family:'DM Mono',monospace;font-weight:600;">
+            ${dData.batt.length > 0
+              ? `<span style="color:#f97316;font-weight:700;">${dData.batt[0].before}%</span><span style="color:#94a3b8;margin:0 4px;">→</span><span style="color:#2563eb;font-weight:700;">${dData.batt[dData.batt.length-1].after}%</span>`
+              : '<span style="color:#94a3b8;">—</span>'}
+          </span>
+        </div>
       </div>`;
     }
 
