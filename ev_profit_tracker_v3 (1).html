@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV Profit Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f6f7f8; --bg-card: #ffffff; --bg-input: #f3f4f6;
+    --border: rgba(15,23,42,0.10); --border-focus: rgba(15,23,42,0.32);
+    --text-primary: #111827; --text-secondary: #64748b; --text-muted: #94a3b8;
+    --green: #15803d; --green-bg: #f0fdf4;
+    --red: #b91c1c; --red-bg: #fef2f2; --red-dim: rgba(185,28,28,0.06);
+    --orange: #f97316;
+    --accent: #0f766e;
+    --blue: #2563eb; --blue-bg: #eff6ff;
+    --purple: #7c3aed; --purple-bg: #f5f3ff;
+    --radius: 14px; --radius-sm: 8px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; padding: 24px 16px 60px; }
+  .tab-bar { display: flex; gap: 6px; max-width: 680px; margin: 0 auto 24px; background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .tab-btn { flex: 1; padding: 9px; border: none; border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s, color 0.15s; }
+  .tab-btn.active { background: var(--bg-input); color: var(--text-primary); }
+  .tab-btn:hover:not(.active) { color: var(--text-primary); }
+  .page { display: none; max-width: 420px; margin: 0 auto; }
+  .page.active { display: block; }
+  .page.wide { max-width: 680px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; padding-top: 8px; }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 38px; height: 38px; background: #ffffff; border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .logo svg { width: 20px; height: 20px; }
+  .header-title { font-size: 17px; font-weight: 600; }
+  .header-sub { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+  .date-input { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); font-family: 'DM Mono', monospace; font-size: 12px; padding: 7px 10px; outline: none; cursor: pointer; }
+  .date-input:focus { border-color: var(--border-focus); color: var(--text-primary); }
+  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 22px 0 10px 2px; }
+  .card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 6px; }
+  .field input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'DM Sans', sans-serif; font-size: 15px; padding: 10px 12px; outline: none; transition: border-color 0.15s; }
+  .field input:focus { border-color: var(--border-focus); }
+  .field input::placeholder { color: var(--text-muted); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .add-btn { width: 100%; padding: 10px; background: #ffffff; border: 1px dashed rgba(15,23,42,0.20); border-radius: var(--radius-sm); color: var(--accent); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 12px; transition: background 0.15s; }
+  .add-btn:hover { background: var(--bg-input); }
+  .sessions-area { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .session-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 100px; font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text-secondary); padding: 4px 10px 4px 12px; }
+  .session-tag .s-cost { color: var(--text-primary); font-weight: 500; }
+  .session-tag .remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; display: flex; align-items: center; transition: color 0.1s; }
+  .session-tag .remove:hover { color: var(--red); }
+  .session-tag .edit-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; line-height: 1; padding: 0; display: flex; align-items: center; transition: color 0.1s; }
+  .session-tag .edit-btn:hover { color: var(--blue); }
+  .week-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .week-nav-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+  .week-nav-btns { display: flex; gap: 4px; }
+  .week-nav-btn { background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); font-size: 13px; padding: 4px 10px; cursor: pointer; transition: background 0.12s; line-height: 1; }
+  .week-nav-btn:hover { background: #e5e7eb; color: var(--text-primary); }
+  .week-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 14px; }
+  .week-day-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .week-day-label { font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #111827; }
+  .week-day-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 12px; padding: 7px 4px; text-align: center; outline: none; transition: border-color 0.15s, background 0.15s; -moz-appearance: textfield; }
+  .week-day-input::-webkit-outer-spin-button, .week-day-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .week-day-input:focus { border-color: var(--border-focus); background: #fff; }
+  .week-day-input.today-input { border-color: rgba(37,99,235,0.35); background: #eff6ff; }
+  .week-day-input.has-value { border-color: rgba(21,128,61,0.3); }
+  .week-day-date { font-size: 9px; color: #1e293b; font-family: 'DM Mono', monospace; font-weight: 700; }
+  .week-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+  .week-stat { background: var(--bg-input); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .week-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .week-stat-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text-primary); }
+  .week-stat.ws-green { background: var(--green-bg); }
+  .week-stat.ws-green .week-stat-label { color: #166534; }
+  .week-stat.ws-green .week-stat-val { color: var(--green); }
+  .week-stat.ws-blue { background: var(--blue-bg); border-left: 3px solid var(--blue); }
+  .week-stat.ws-blue .week-stat-label { color: #1e3a8a; }
+  .week-stat.ws-blue .week-stat-val { color: var(--blue); }
+  .week-hours-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .week-hours-label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+  .week-hours-input { width: 80px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 14px; padding: 8px 10px; outline: none; transition: border-color 0.15s; -moz-appearance: textfield; }
+  .week-hours-input::-webkit-outer-spin-button, .week-hours-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .week-hours-input:focus { border-color: var(--border-focus); }
+  .week-hours-sub { font-size: 11px; color: var(--text-muted); }
+  .clear-btn { width: 100%; padding: 10px; background: transparent; border: 1px solid rgba(220,38,38,0.25); border-radius: var(--radius-sm); color: var(--red); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 14px; transition: background 0.15s; }
+  .clear-btn:hover { background: var(--red-dim); }
+  .charge-card { background: var(--bg-card); border: 0.5px solid var(--border); }
+  .action-row { display: flex; gap: 8px; margin-bottom: 18px; }
+  .pdf-btn { flex: 1; padding: 10px 14px; background: #f0fdf4; border: 1px solid rgba(21,128,61,0.25); border-radius: var(--radius-sm); color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.15s; }
+  .pdf-btn:hover { background: #dcfce7; }
+  .cal-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; margin-bottom: 24px; }
+  .cal-metric { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .cal-metric .lbl { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
+  .cal-metric .val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; }
+  .cal-metric .sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .year-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .year-nav button { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 14px; padding: 6px 14px; cursor: pointer; }
+  .year-nav button:hover { background: var(--bg-input); }
+  .year-label { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; }
+  .month-accordion { margin-bottom: 10px; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 0.5px solid var(--border); }
+  .month-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .month-header:hover { background: var(--bg-input); }
+  .month-header-left { display: flex; align-items: center; gap: 12px; }
+  .month-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .month-name-big { font-size: 14px; font-weight: 600; }
+  .month-pill { font-size: 11px; font-family: 'DM Mono', monospace; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+  .month-total { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 600; }
+  .month-chevron { font-size: 11px; color: var(--text-muted); transition: transform 0.22s; margin-left: 8px; }
+  .month-chevron.open { transform: rotate(180deg); }
+  .month-bar-strip { height: 3px; }
+  .month-bar-strip-fill { height: 100%; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .month-days { display: none; border-top: 0.5px solid var(--border); }
+  .month-days.open { display: block; }
+  .day-row { display: flex; align-items: center; padding: 10px 18px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.12s; }
+  .day-row:last-child { border-bottom: none; }
+  .day-row:hover { background: var(--bg-input); }
+  .day-date { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; width: 58px; flex-shrink: 0; }
+  .day-sessions-badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 99px; flex-shrink: 0; margin-right: 10px; font-family: 'DM Mono', monospace; }
+  .day-bar-wrap { flex: 1; height: 6px; background: rgba(0,0,0,0.06); border-radius: 99px; margin-right: 12px; overflow: hidden; }
+  .day-bar-fill { height: 100%; border-radius: 99px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .day-amount { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600; text-align: right; min-width: 64px; }
+  .day-earn { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--green); min-width: 76px; text-align: right; margin-left: 10px; }
+  .day-details { display: none; background: #f8fafc; border-top: 1px solid var(--border); padding: 12px 18px; }
+  .day-details.open { display: block; }
+  .day-detail-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; padding: 4px 0; }
+  .day-detail-label { color: var(--text-secondary); }
+  .day-detail-val { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text-primary); }
+  .day-detail-val.positive { color: var(--green); } .day-detail-val.loss { color: var(--red); }
+  .day-detail-val.info { color: var(--blue); } .day-detail-val.neutral { color: #334155; }
+  .day-detail-val.purple { color: #6d28d9; }
+  .no-data { text-align: center; padding: 32px; color: var(--text-muted); font-size: 13px; background: var(--bg-card); border-radius: 12px; border: 0.5px dashed rgba(0,0,0,0.12); }
+  .cal-week-row { display: flex; align-items: center; padding: 10px 18px; background: #f0f4ff; border-bottom: 0.5px solid var(--border); gap: 8px; flex-wrap: wrap; border-left: 3px solid #2563eb; }
+  .cal-week-label { font-size: 11px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #1e293b; width: 54px; flex-shrink: 0; }
+  .cal-week-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-family: 'DM Mono', monospace; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+  .cal-week-pill.earn { background: #f0fdf4; color: #15803d; border: 1px solid rgba(21,128,61,0.2); }
+  .cal-week-pill.ev   { background: #eff6ff; color: #1d4ed8; border: 1px solid rgba(37,99,235,0.2); }
+  .cal-week-pill.profit-pos { background: #f0fdf4; color: #15803d; border: 1px solid rgba(21,128,61,0.25); font-weight: 700; }
+  .cal-week-pill.profit-neg { background: #fef2f2; color: #b91c1c; border: 1px solid rgba(185,28,28,0.2); font-weight: 700; }
+  .cal-week-divider { width: 1px; height: 16px; background: var(--border); flex-shrink: 0; }
+  .cal-weekly-table { width: 100%; margin-bottom: 20px; background: var(--bg-card); border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .cal-weekly-table-header { display: grid; grid-template-columns: 80px 1fr 1fr 1fr 1fr; background: #1e293b; padding: 10px 18px; }
+  .cwth { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #e2e8f0; text-align: right; }
+  .cwth:first-child { text-align: left; }
+  .cal-weekly-table-row { display: grid; grid-template-columns: 80px 1fr 1fr 1fr 1fr; padding: 9px 18px; border-bottom: 0.5px solid var(--border); transition: background 0.1s; }
+  .cal-weekly-table-row:last-child { border-bottom: none; }
+  .cal-weekly-table-row:hover { background: var(--bg-input); }
+  .cwtd { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; text-align: right; color: var(--text-primary); display: flex; align-items: center; justify-content: flex-end; }
+  .cwtd:first-child { text-align: left; justify-content: flex-start; color: #1e293b; font-weight: 700; font-size: 11px; }
+  .cwtd.earn-val { color: var(--green); } .cwtd.ev-val { color: var(--blue); }
+  .cwtd.profit-pos { color: var(--green); font-weight: 700; } .cwtd.profit-neg { color: var(--red); font-weight: 700; }
+  .cwtd.hours-val { color: #475569; }
+  .cal-weekly-footer { display: grid; grid-template-columns: 80px 1fr 1fr 1fr 1fr; padding: 10px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+  .cwtf { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700; text-align: right; color: var(--text-primary); }
+  .cwtf:first-child { text-align: left; color: #334155; font-size: 11px; }
+  .cwtf.earn-val { color: var(--green); } .cwtf.ev-val { color: var(--blue); }
+  .cwtf.profit-pos { color: var(--green); } .cwtf.profit-neg { color: var(--red); }
+
+  /* DATE VIEWER */
+  .dvp-empty { text-align: center; padding: 28px 0; color: var(--text-muted); font-size: 13px; }
+  .dvp-empty-icon { font-size: 28px; margin-bottom: 8px; }
+  .dvp-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .dvp-stat { background: var(--bg-input); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .dvp-stat.green { background: var(--green-bg); }
+  .dvp-stat.blue  { background: var(--blue-bg); border-left: 3px solid var(--blue); }
+  .dvp-stat.red   { background: var(--red-bg); border-left: 3px solid var(--red); }
+  .dvp-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .dvp-stat.green .dvp-stat-label { color: #166534; }
+  .dvp-stat.blue  .dvp-stat-label { color: #1e3a8a; }
+  .dvp-stat.red   .dvp-stat-label { color: #991b1b; }
+  .dvp-stat-val { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .dvp-stat.green .dvp-stat-val { color: var(--green); }
+  .dvp-stat.blue  .dvp-stat-val { color: var(--blue); }
+  .dvp-stat.red   .dvp-stat-val { color: var(--red); }
+  .dvp-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin: 14px 0 8px 0; }
+  .dvp-charge-item { background: var(--bg-input); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .dvp-charge-left { display: flex; flex-direction: column; gap: 3px; }
+  .dvp-charge-cost { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 600; color: var(--blue); }
+  .dvp-charge-meta { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .dvp-charge-batt { font-size: 11px; font-family: 'DM Mono', monospace; }
+  .dvp-charge-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .dvp-edit-btn { background: var(--blue-bg); border: 1px solid rgba(37,99,235,0.2); border-radius: 6px; color: var(--blue); font-size: 11px; font-weight: 500; padding: 4px 10px; cursor: pointer; transition: background 0.1s; }
+  .dvp-edit-btn:hover { background: #dbeafe; }
+  .dvp-del-btn { background: var(--red-bg); border: 1px solid rgba(185,28,28,0.2); border-radius: 6px; color: var(--red); font-size: 11px; font-weight: 500; padding: 4px 10px; cursor: pointer; transition: background 0.1s; }
+  .dvp-del-btn:hover { background: #fecaca; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #ffffff; border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.18); width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 24px; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .modal-title { font-size: 16px; font-weight: 600; }
+  .modal-close { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; line-height: 1; padding: 2px 6px; border-radius: 6px; transition: background 0.1s; }
+  .modal-close:hover { background: var(--bg-input); color: var(--text-primary); }
+  .modal .field input { font-size: 14px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+  .btn-save { flex: 1; padding: 11px; background: var(--accent); border: none; border-radius: var(--radius-sm); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .btn-save:hover { opacity: 0.9; }
+  .btn-cancel { flex: 1; padding: 11px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .btn-cancel:hover { background: #e9ebee; }
+  .modal-section { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 18px 0 10px 2px; }
+
+  @media print {
+    body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .tab-bar, .modal-overlay, #page-tracker, .action-row, .clear-btn { display: none !important; }
+    #page-calendar { display: block !important; max-width: 100%; }
+    .month-days { display: block !important; }
+    .day-details { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Edit Session</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" id="modalSaveBtn">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('tracker',this)">⚡ Daily Tracker</button>
+  <button class="tab-btn" onclick="showTab('calendar',this)">📅 Performance Calendar</button>
+</div>
+
+<!-- DAILY TRACKER -->
+<div class="page active" id="page-tracker">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M11 2L4 11h7l-2 7 9-10h-7l2-8z" stroke="#0f766e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="header-title">EV Profit Tracker</div>
+        <div class="header-sub">For Uber EV drivers</div>
+      </div>
+    </div>
+    <input type="date" id="date" class="date-input">
+  </div>
+
+  <div class="section-label">Weekly Earnings</div>
+  <div class="card">
+    <div class="week-nav">
+      <div class="week-nav-label" id="weekRangeLabel">Loading…</div>
+      <div class="week-nav-btns">
+        <button class="week-nav-btn" onclick="changeWeek(-1)">‹</button>
+        <button class="week-nav-btn" onclick="changeWeek(1)">›</button>
+      </div>
+    </div>
+    <div class="week-days-grid" id="weekDaysGrid"></div>
+    <div class="week-summary">
+      <div class="week-stat ws-green"><div class="week-stat-label">Week total</div><div class="week-stat-val" id="weekTotal">£0.00</div></div>
+      <div class="week-stat ws-blue"><div class="week-stat-label">Week profit</div><div class="week-stat-val" id="weekProfit">£0.00</div></div>
+      <div class="week-stat"><div class="week-stat-label">Per hour</div><div class="week-stat-val" id="weekPerHour">—</div></div>
+    </div>
+    <div class="week-hours-row">
+      <span class="week-hours-label">Hours this week:</span>
+      <input type="number" class="week-hours-input" id="weekHours" placeholder="0" step="0.5" min="0">
+      <span class="week-hours-sub" id="weekHoursSub"></span>
+    </div>
+  </div>
+
+  <div class="section-label">EV Charging</div>
+  <div class="card charge-card">
+    <div class="field" style="margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:6px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Charge date
+      </label>
+      <input id="chargeDate" type="date" style="width:100%;background:#eff6ff;border:1px solid rgba(37,99,235,0.28);border-radius:8px;color:#111827;font-family:'DM Mono',monospace;font-size:14px;padding:9px 12px;outline:none;cursor:pointer;transition:border-color 0.15s;">
+    </div>
+    <div class="row2">
+      <div class="field"><label>Charge cost (£)</label><input id="charging" type="number" placeholder="15.90" step="0.01" min="0"></div>
+      <div class="field"><label>Miles added</label><input id="mileage" type="number" placeholder="222" step="1" min="0"></div>
+    </div>
+    <div class="row2" style="margin-top:10px;">
+      <div class="field"><label>Battery % before</label><input id="battBefore" type="number" placeholder="18" step="1" min="0" max="100"></div>
+      <div class="field"><label>Battery % after</label><input id="battAfter" type="number" placeholder="85" step="1" min="0" max="100"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Mileage before</label><input id="milesBefore" type="number" placeholder="42000" step="1" min="0"></div>
+      <div class="field"><label>Mileage after <span style="color:var(--text-muted);font-size:10px;">auto</span></label><input id="milesAfter" type="number" placeholder="42222" step="1" min="0"></div>
+    </div>
+    <button class="add-btn" onclick="addCharge()">+ Add charging session</button>
+    <div class="sessions-area" id="sessions-area"></div>
+  </div>
+
+  <!-- DATE VIEWER -->
+  <div class="section-label">View a date</div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="padding:14px 18px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <label style="font-size:12px;color:var(--text-secondary);white-space:nowrap;">Pick a date to view:</label>
+      <input type="date" id="viewerDate" style="background:var(--blue-bg);border:1px solid rgba(37,99,235,0.28);border-radius:8px;color:#111827;font-family:'DM Mono',monospace;font-size:13px;padding:7px 10px;outline:none;cursor:pointer;flex:1;min-width:140px;" oninput="renderDateViewer()">
+    </div>
+    <div id="dateViewerBody" style="padding:16px 18px;">
+      <div class="dvp-empty"><div class="dvp-empty-icon">📅</div>Pick a date above to see what's recorded for that day.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PERFORMANCE CALENDAR -->
+<div class="page wide" id="page-calendar">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="#0f766e" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div class="header-title">Performance Calendar</div>
+        <div class="header-sub">Weekly earnings + charging spend at a glance</div>
+      </div>
+    </div>
+  </div>
+  <div class="cal-metrics" id="calMetrics"></div>
+
+  <div style="margin-bottom:6px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Weekly breakdown — <span id="calWeeklyYear"></span></div>
+    <div class="cal-weekly-table">
+      <div class="cal-weekly-table-header">
+        <div class="cwth" style="text-align:left;">Week</div>
+        <div class="cwth">Earnings</div>
+        <div class="cwth">EV spend</div>
+        <div class="cwth">Net profit</div>
+        <div class="cwth">Hours</div>
+      </div>
+      <div id="calWeeklyTableBody"></div>
+      <div class="cal-weekly-footer" id="calWeeklyFooter"></div>
+    </div>
+  </div>
+
+  <div class="action-row" style="margin-top:18px;">
+    <button class="pdf-btn" onclick="printAsPDF()">🖨️ Save as PDF</button>
+  </div>
+  <div class="card" style="margin-bottom:18px;">
+    <button class="clear-btn" onclick="clearAll()">Clear all EV records</button>
+  </div>
+  <div class="year-nav">
+    <button onclick="changeYear(-1)">&#8592;</button>
+    <span class="year-label" id="yearLabel"></span>
+    <button onclick="changeYear(1)">&#8594;</button>
+  </div>
+  <div id="calBody"></div>
+</div>
+
+<script>
+let charges = [];
+let dayStats = {};
+let weekStats = {};
+
+try { charges  = JSON.parse(localStorage.getItem("ev_charges"))   || []; } catch(e) {}
+try { dayStats = JSON.parse(localStorage.getItem("ev_day_stats")) || {}; } catch(e) {}
+try { weekStats= JSON.parse(localStorage.getItem("ev_week_stats"))|| {}; } catch(e) {}
+
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS      = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY_ABBR    = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const MONTH_COLOURS = [
+  { solid:'#2563eb', bg:'#eff6ff', text:'#1e3a8a', pill:'rgba(37,99,235,0.10)', pillText:'#1d4ed8' },
+  { solid:'#7c3aed', bg:'#f5f3ff', text:'#5b21b6', pill:'rgba(124,58,237,0.10)', pillText:'#6d28d9' },
+  { solid:'#0f766e', bg:'#f0fdfa', text:'#115e59', pill:'rgba(15,118,110,0.10)', pillText:'#0f766e' },
+  { solid:'#d97706', bg:'#fffbeb', text:'#92400e', pill:'rgba(217,119,6,0.12)',  pillText:'#b45309' },
+  { solid:'#16a34a', bg:'#f0fdf4', text:'#166534', pill:'rgba(22,163,74,0.10)',  pillText:'#15803d' },
+  { solid:'#dc2626', bg:'#fef2f2', text:'#991b1b', pill:'rgba(220,38,38,0.10)',  pillText:'#b91c1c' },
+  { solid:'#0891b2', bg:'#ecfeff', text:'#155e75', pill:'rgba(8,145,178,0.10)',  pillText:'#0e7490' },
+  { solid:'#c026d3', bg:'#fdf4ff', text:'#86198f', pill:'rgba(192,38,211,0.10)', pillText:'#a21caf' },
+  { solid:'#ea580c', bg:'#fff7ed', text:'#9a3412', pill:'rgba(234,88,12,0.12)',  pillText:'#c2410c' },
+  { solid:'#4f46e5', bg:'#eef2ff', text:'#3730a3', pill:'rgba(79,70,229,0.10)',  pillText:'#4338ca' },
+  { solid:'#65a30d', bg:'#f7fee7', text:'#3f6212', pill:'rgba(101,163,13,0.12)', pillText:'#4d7c0f' },
+  { solid:'#be123c', bg:'#fff1f2', text:'#881337', pill:'rgba(190,18,60,0.10)',  pillText:'#be123c' }
+];
+
+let _modalMode = null, _modalIdx = -1;
+let weekOffset = 0;
+
+const pad = n => String(n).padStart(2,"0");
+const fmt = n => "£" + Number(n).toFixed(2);
+const todayDate = new Date();
+
+const dateEl = document.getElementById("date");
+dateEl.value = `${todayDate.getFullYear()}-${pad(todayDate.getMonth()+1)}-${pad(todayDate.getDate())}`;
+const todayStr = () => dateEl.value;
+
+function getMondayOf(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = (day === 0) ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function dateToStr(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function isoWeekKey(monday) {
+  const jan4 = new Date(monday.getFullYear(), 0, 4);
+  const startOfWeek1 = getMondayOf(jan4);
+  const weekNum = Math.round((monday - startOfWeek1) / 604800000) + 1;
+  return `${monday.getFullYear()}-W${pad(weekNum)}`;
+}
+function getWeekDates(offset) {
+  const base = getMondayOf(todayDate);
+  base.setDate(base.getDate() + offset * 7);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() + i);
+    days.push(d);
+  }
+  return days;
+}
+
+function renderWeek() {
+  const days = getWeekDates(weekOffset);
+  const wKey = isoWeekKey(days[0]);
+  const todayISO = dateToStr(todayDate);
+  const start = days[0], end = days[6];
+  const sameMonth = start.getMonth() === end.getMonth();
+  const lbl = sameMonth
+    ? `${start.getDate()}–${end.getDate()} ${MONTHS[start.getMonth()]} ${start.getFullYear()}`
+    : `${start.getDate()} ${MONTHS[start.getMonth()]} – ${end.getDate()} ${MONTHS[end.getMonth()]} ${end.getFullYear()}`;
+  document.getElementById('weekRangeLabel').textContent = lbl;
+  const grid = document.getElementById('weekDaysGrid');
+  grid.innerHTML = days.map((d,i) => {
+    const ds   = dateToStr(d);
+    const earn = (dayStats[ds] && dayStats[ds].earnings) || '';
+    const isToday = ds === todayISO;
+    const hasVal  = earn !== '' && earn > 0;
+    return `<div class="week-day-cell">
+      <div class="week-day-label">${DAY_ABBR[i]}</div>
+      <input class="week-day-input${isToday?' today-input':''}${hasVal?' has-value':''}"
+             type="number" step="0.01" min="0" placeholder="—"
+             value="${earn}" data-date="${ds}"
+             oninput="onWeekDayInput(this)">
+      <div class="week-day-date">${pad(d.getDate())}/${pad(d.getMonth()+1)}</div>
+    </div>`;
+  }).join('');
+  const wh = weekStats[wKey] || {};
+  document.getElementById('weekHours').value = wh.hours || '';
+  document.getElementById('weekHours').dataset.wkey = wKey;
+  updateWeekSummary(days, wKey);
+}
+
+function onWeekDayInput(input) {
+  const ds  = input.dataset.date;
+  const val = parseFloat(input.value) || 0;
+  const existing = dayStats[ds] || {};
+  dayStats[ds] = { ...existing, earnings: val };
+  try { localStorage.setItem("ev_day_stats", JSON.stringify(dayStats)); } catch(e) {}
+  input.classList.toggle('has-value', val > 0);
+  const days = getWeekDates(weekOffset);
+  const wKey = isoWeekKey(days[0]);
+  updateWeekSummary(days, wKey);
+  renderDateViewer();
+}
+
+function updateWeekSummary(days, wKey) {
+  let weekEarn = 0, weekEv = 0;
+  days.forEach(d => {
+    const ds = dateToStr(d);
+    weekEarn += (dayStats[ds] && dayStats[ds].earnings) || 0;
+    weekEv   += charges.filter(c => c.date === ds).reduce((s,c) => s + c.cost, 0);
+  });
+  const hours  = parseFloat(document.getElementById('weekHours').value) || 0;
+  const profit = weekEarn - weekEv;
+  document.getElementById('weekTotal').textContent  = fmt(weekEarn);
+  document.getElementById('weekProfit').textContent = fmt(profit);
+  document.getElementById('weekProfit').style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('weekPerHour').textContent = hours > 0 ? fmt(profit / hours) : '—';
+  document.getElementById('weekHoursSub').textContent = weekEv > 0 ? `EV: ${fmt(weekEv)}` : '';
+}
+
+function changeWeek(delta) { weekOffset += delta; renderWeek(); }
+
+document.getElementById('weekHours').addEventListener('input', function() {
+  const wKey = this.dataset.wkey;
+  const hrs  = parseFloat(this.value) || 0;
+  weekStats[wKey] = { hours: hrs };
+  try { localStorage.setItem("ev_week_stats", JSON.stringify(weekStats)); } catch(e) {}
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, wKey);
+});
+
+function showTab(tab, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'calendar') renderCalendar();
+}
+
+dateEl.addEventListener("change", () => { renderSessions(); });
+
+function autoFillMilesAfter() {
+  const before = parseFloat(document.getElementById("milesBefore").value);
+  const added  = parseFloat(document.getElementById("mileage").value);
+  if (!isNaN(before) && !isNaN(added) && added > 0)
+    document.getElementById("milesAfter").value = Math.round(before + added);
+}
+document.getElementById("milesBefore").addEventListener("input", autoFillMilesAfter);
+document.getElementById("mileage").addEventListener("input", autoFillMilesAfter);
+
+function findChargeIndex(date, nth) {
+  let count = -1;
+  for (let i = 0; i < charges.length; i++) {
+    if (charges[i].date === date) count++;
+    if (count === nth) return i;
+  }
+  return -1;
+}
+
+function renderSessions() {
+  const date = todayStr();
+  const area = document.getElementById("sessions-area");
+  const list = charges.filter(c => c.date === date);
+  if (!list.length) { area.innerHTML = ""; return; }
+  area.innerHTML = list.map((c,i) => {
+    const realIdx = findChargeIndex(date, i);
+    let parts = [`<span class="s-cost">${fmt(c.cost)}</span>`];
+    if (c.mileage) parts.push(`<span style="color:var(--text-secondary)">${c.mileage}mi</span>`);
+    if (c.battBefore != null && c.battAfter != null) parts.push(`<span style="color:var(--text-secondary)">${c.battBefore}%→${c.battAfter}%</span>`);
+    return `<span class="session-tag">${parts.join('<span style="color:var(--text-muted);margin:0 2px;">·</span>')}
+      <button class="edit-btn" onclick="openSessionEdit(${realIdx})" title="Edit">✏️</button>
+      <button class="remove" onclick="removeCharge(${realIdx})" title="Remove">×</button>
+    </span>`;
+  }).join("");
+}
+
+function removeCharge(idx) {
+  if (idx < 0) return;
+  charges.splice(idx, 1);
+  try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
+  renderSessions(); renderDateViewer();
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, isoWeekKey(days[0]));
+}
+
+function addCharge() {
+  const cost = parseFloat(document.getElementById("charging").value) || 0;
+  if (cost <= 0) { document.getElementById("charging").focus(); return; }
+  const mileage     = parseFloat(document.getElementById("mileage").value) || 0;
+  const battBefore  = document.getElementById("battBefore").value  !== "" ? parseFloat(document.getElementById("battBefore").value)  : null;
+  const battAfter   = document.getElementById("battAfter").value   !== "" ? parseFloat(document.getElementById("battAfter").value)   : null;
+  const milesBefore = document.getElementById("milesBefore").value !== "" ? parseFloat(document.getElementById("milesBefore").value) : null;
+  const milesAfter  = document.getElementById("milesAfter").value  !== "" ? parseFloat(document.getElementById("milesAfter").value)  : null;
+  const chargeDate  = document.getElementById("chargeDate").value || todayStr();
+  charges.push({ date: chargeDate, cost, mileage, battBefore, battAfter, milesBefore, milesAfter });
+  try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
+  ["charging","mileage","battBefore","battAfter","milesBefore","milesAfter"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("chargeDate").value = dateToStr(todayDate);
+  renderSessions(); renderDateViewer();
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, isoWeekKey(days[0]));
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+  _modalMode = null; _modalIdx = -1;
+}
+
+function openSessionEdit(idx) {
+  const c = charges[idx];
+  if (!c) return;
+  _modalMode = 'session'; _modalIdx = idx;
+  document.getElementById('modalTitle').textContent = 'Edit Charging Session';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-section">Charging</div>
+    <div class="field"><label>Charge cost (£)</label><input id="m_cost" type="number" step="0.01" min="0" value="${c.cost||''}"></div>
+    <div class="field"><label>Miles added</label><input id="m_miles" type="number" step="1" min="0" value="${c.mileage||''}"></div>
+    <div class="modal-section">Battery</div>
+    <div class="row2">
+      <div class="field"><label>Battery % before</label><input id="m_bb" type="number" step="1" min="0" max="100" value="${c.battBefore!=null?c.battBefore:''}"></div>
+      <div class="field"><label>Battery % after</label><input id="m_ba" type="number" step="1" min="0" max="100" value="${c.battAfter!=null?c.battAfter:''}"></div>
+    </div>
+    <div class="modal-section">Mileage</div>
+    <div class="row2">
+      <div class="field"><label>Odometer before</label><input id="m_mb" type="number" step="1" min="0" value="${c.milesBefore!=null?c.milesBefore:''}"></div>
+      <div class="field"><label>Odometer after</label><input id="m_ma" type="number" step="1" min="0" value="${c.milesAfter!=null?c.milesAfter:''}"></div>
+    </div>
+    <div class="modal-section">Date</div>
+    <div class="field"><label>Date</label><input id="m_date" type="date" value="${c.date||''}"></div>
+  `;
+  function modalAutoMiles() {
+    const mb = parseFloat(document.getElementById('m_mb').value);
+    const ml = parseFloat(document.getElementById('m_miles').value);
+    if (!isNaN(mb) && !isNaN(ml) && ml > 0) document.getElementById('m_ma').value = Math.round(mb + ml);
+  }
+  document.getElementById('m_mb').addEventListener('input', modalAutoMiles);
+  document.getElementById('m_miles').addEventListener('input', modalAutoMiles);
+  document.getElementById('modalSaveBtn').onclick = saveSessionEdit;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function saveSessionEdit() {
+  const c = charges[_modalIdx];
+  if (!c) return;
+  c.cost       = parseFloat(document.getElementById('m_cost').value) || 0;
+  c.mileage    = parseFloat(document.getElementById('m_miles').value) || 0;
+  c.battBefore = document.getElementById('m_bb').value !== '' ? parseFloat(document.getElementById('m_bb').value) : null;
+  c.battAfter  = document.getElementById('m_ba').value !== '' ? parseFloat(document.getElementById('m_ba').value) : null;
+  c.milesBefore= document.getElementById('m_mb').value !== '' ? parseFloat(document.getElementById('m_mb').value) : null;
+  c.milesAfter = document.getElementById('m_ma').value !== '' ? parseFloat(document.getElementById('m_ma').value) : null;
+  c.date       = document.getElementById('m_date').value || c.date;
+  try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
+  closeModal(); renderSessions(); renderDateViewer();
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, isoWeekKey(days[0]));
+  if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
+}
+
+/* DATE VIEWER */
+function renderDateViewer() {
+  const dateKey = document.getElementById('viewerDate').value;
+  const body = document.getElementById('dateViewerBody');
+  if (!dateKey) {
+    body.innerHTML = '<div class="dvp-empty"><div class="dvp-empty-icon">📅</div>Pick a date above to see what\'s recorded for that day.</div>';
+    return;
+  }
+  const daySessions = charges.filter(c => c.date === dateKey);
+  const ds = dayStats[dateKey] || {};
+  const earnings = ds.earnings || 0;
+  const totalEv = daySessions.reduce((s,c) => s + (c.cost||0), 0);
+  const profit = earnings - totalEv;
+  const hasAnyData = earnings > 0 || daySessions.length > 0;
+
+  if (!hasAnyData) {
+    body.innerHTML = `<div class="dvp-empty"><div class="dvp-empty-icon">🔍</div>No data recorded for <strong>${formatDateDisplay(dateKey)}</strong>.</div>`;
+    return;
+  }
+
+  const profitStatCls = profit > 0 ? 'green' : profit < 0 ? 'red' : '';
+
+  let chargesHtml = '';
+  if (daySessions.length > 0) {
+    chargesHtml = `<div class="dvp-section-label">Charging sessions (${daySessions.length})</div>`;
+    daySessions.forEach((c, i) => {
+      const realIdx = findChargeIndex(dateKey, i);
+      let meta = [];
+      if (c.mileage) meta.push(`${c.mileage} mi`);
+      if (c.milesBefore != null) meta.push(`Odometer: ${c.milesBefore.toLocaleString()}`);
+      let battStr = '';
+      if (c.battBefore != null && c.battAfter != null)
+        battStr = `<span style="color:#f97316;font-weight:600;">${c.battBefore}%</span> → <span style="color:#2563eb;font-weight:600;">${c.battAfter}%</span>`;
+      chargesHtml += `<div class="dvp-charge-item">
+        <div class="dvp-charge-left">
+          <span class="dvp-charge-cost">${fmt(c.cost)}</span>
+          ${meta.length ? `<span class="dvp-charge-meta">${meta.join(' · ')}</span>` : ''}
+          ${battStr ? `<span class="dvp-charge-batt">${battStr}</span>` : ''}
+        </div>
+        <div class="dvp-charge-actions">
+          <button class="dvp-edit-btn" onclick="openSessionEdit(${realIdx})">Edit</button>
+          <button class="dvp-del-btn" onclick="removeCharge(${realIdx})">Delete</button>
+        </div>
+      </div>`;
+    });
+  } else {
+    chargesHtml = `<div class="dvp-section-label">Charging sessions</div><div style="font-size:12px;color:var(--text-muted);padding:6px 0;">No charging sessions for this date.</div>`;
+  }
+
+  body.innerHTML = `
+    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;font-family:'DM Mono',monospace;">${formatDateDisplay(dateKey)}</div>
+    <div class="dvp-summary-grid">
+      <div class="dvp-stat green"><div class="dvp-stat-label">Earnings</div><div class="dvp-stat-val">${fmt(earnings)}</div></div>
+      <div class="dvp-stat blue"><div class="dvp-stat-label">EV cost</div><div class="dvp-stat-val">${fmt(totalEv)}</div></div>
+      <div class="dvp-stat ${profitStatCls}"><div class="dvp-stat-label">Net profit</div><div class="dvp-stat-val">${fmt(profit)}</div></div>
+    </div>
+    ${chargesHtml}
+  `;
+}
+
+function formatDateDisplay(dateKey) {
+  if (!dateKey) return '';
+  const [y,m,d] = dateKey.split('-').map(Number);
+  return `${d} ${MONTHS_FULL[m-1]} ${y}`;
+}
+
+function clearAll() {
+  if (confirm("Delete all EV charging records and earnings records?")) {
+    charges = []; dayStats = {}; weekStats = {};
+    try {
+      localStorage.removeItem("ev_charges");
+      localStorage.removeItem("ev_day_stats");
+      localStorage.removeItem("ev_week_stats");
+    } catch(e) {}
+    renderWeek(); renderSessions(); renderDateViewer();
+  }
+}
+
+let currentYear = new Date().getFullYear();
+
+function getWeekKeyForDate(dateStr) {
+  const dt = new Date(dateStr + 'T00:00:00');
+  const day = dt.getDay();
+  const diff = (day === 0) ? -6 : 1 - day;
+  const mon = new Date(dt); mon.setDate(dt.getDate() + diff);
+  const jan4 = new Date(mon.getFullYear(), 0, 4);
+  const startW1mon = new Date(jan4);
+  const jan4day = jan4.getDay(); const diffJ = (jan4day===0)?-6:1-jan4day;
+  startW1mon.setDate(jan4.getDate() + diffJ);
+  const weekNum = Math.round((mon - startW1mon) / 604800000) + 1;
+  return mon.getFullYear() + '-W' + String(weekNum).padStart(2,'0');
+}
+
+function buildYearData(year) {
+  const byMonth = {}, byDay = {};
+  charges.forEach(c => {
+    if (!c.date) return;
+    const [y,m] = c.date.split('-').map(Number);
+    if (y !== year || m < 1 || m > 12) return;
+    const mk = m - 1;
+    if (!byMonth[mk]) byMonth[mk] = { total:0, sessions:0, earnings:0, profit:0 };
+    byMonth[mk].total += c.cost || 0; byMonth[mk].sessions++;
+    if (!byDay[c.date]) byDay[c.date] = { total:0, sessions:0, miles:0, batt:[], milesBefore:null, milesAfter:null };
+    byDay[c.date].total += c.cost || 0; byDay[c.date].sessions++;
+    byDay[c.date].miles += c.mileage || 0;
+    if (c.battBefore != null) byDay[c.date].batt.push({ before:c.battBefore, after:c.battAfter });
+    if (c.milesBefore != null && byDay[c.date].milesBefore === null) byDay[c.date].milesBefore = c.milesBefore;
+    if (c.milesAfter  != null) byDay[c.date].milesAfter = c.milesAfter;
+  });
+  Object.keys(dayStats).forEach(date => {
+    const [y] = date.split('-').map(Number);
+    if (y !== year) return;
+    if (!byDay[date]) byDay[date] = { total:0, sessions:0, miles:0, batt:[], milesBefore:null, milesAfter:null };
+  });
+  Object.keys(byDay).forEach(date => {
+    const [,m] = date.split('-').map(Number);
+    const earnings = (dayStats[date] && dayStats[date].earnings) || 0;
+    const hours    = (dayStats[date] && dayStats[date].hours)    || 0;
+    byDay[date].earnings = earnings; byDay[date].hours = hours;
+    byDay[date].profit = earnings - byDay[date].total;
+    if (!byMonth[m-1]) byMonth[m-1] = { total:0, sessions:0, earnings:0, profit:0 };
+    byMonth[m-1].earnings += earnings;
+    byMonth[m-1].profit   += byDay[date].profit;
+  });
+  return { byMonth, byDay };
+}
+
+function getDaysInMonth(year, month) { return new Date(year, month+1, 0).getDate(); }
+
+function renderWeeklyTable(year, byDay) {
+  document.getElementById('calWeeklyYear').textContent = year;
+  const weekMap = {};
+  Object.keys(byDay).forEach(date => {
+    const [y] = date.split('-').map(Number);
+    if (y !== year) return;
+    const wk = getWeekKeyForDate(date);
+    if (!weekMap[wk]) weekMap[wk] = { earn:0, ev:0, hours:0 };
+    weekMap[wk].earn  += (byDay[date].earnings || 0);
+    weekMap[wk].ev    += (byDay[date].total    || 0);
+    weekMap[wk].hours += (byDay[date].hours    || 0);
+  });
+  Object.keys(weekStats).forEach(wk => {
+    if (!wk.startsWith(year+'-W')) return;
+    if (!weekMap[wk]) weekMap[wk] = { earn:0, ev:0, hours:0 };
+    weekMap[wk].hours = weekStats[wk].hours || weekMap[wk].hours;
+  });
+  const sortedWeeks = Object.keys(weekMap).sort();
+  if (sortedWeeks.length === 0) {
+    document.getElementById('calWeeklyTableBody').innerHTML = `<div style="padding:16px 18px;font-size:12px;color:var(--text-muted);text-align:center;">No data for ${year} yet.</div>`;
+    document.getElementById('calWeeklyFooter').innerHTML = '';
+    return;
+  }
+  let totalEarn = 0, totalEv = 0, totalHours = 0;
+  const rows = sortedWeeks.map(wk => {
+    const d = weekMap[wk];
+    const profit = d.earn - d.ev;
+    totalEarn += d.earn; totalEv += d.ev; totalHours += d.hours;
+    const wNum = wk.split('-W')[1];
+    const profCls = profit >= 0 ? 'profit-pos' : 'profit-neg';
+    return `<div class="cal-weekly-table-row">
+      <div class="cwtd">Wk ${wNum}</div>
+      <div class="cwtd earn-val">${fmt(d.earn)}</div>
+      <div class="cwtd ev-val">${fmt(d.ev)}</div>
+      <div class="cwtd ${profCls}">${fmt(profit)}</div>
+      <div class="cwtd hours-val">${d.hours > 0 ? d.hours.toFixed(1)+'h' : '—'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('calWeeklyTableBody').innerHTML = rows;
+  const totalProfit = totalEarn - totalEv;
+  const profCls = totalProfit >= 0 ? 'profit-pos' : 'profit-neg';
+  document.getElementById('calWeeklyFooter').innerHTML = `
+    <div class="cwtf">Total</div>
+    <div class="cwtf earn-val">${fmt(totalEarn)}</div>
+    <div class="cwtf ev-val">${fmt(totalEv)}</div>
+    <div class="cwtf ${profCls}">${fmt(totalProfit)}</div>
+    <div class="cwtf">${totalHours > 0 ? totalHours.toFixed(1)+'h' : '—'}</div>
+  `;
+}
+
+function renderCalendar() {
+  const { byMonth, byDay } = buildYearData(currentYear);
+  document.getElementById('yearLabel').textContent = currentYear;
+  renderWeeklyTable(currentYear, byDay);
+
+  const allTime   = charges.reduce((s,c) => s+(c.cost||0), 0);
+  const allSess   = charges.length;
+  const yearTotal = Object.values(byMonth).reduce((s,m) => s+m.total, 0);
+  const yearEarn  = Object.values(byMonth).reduce((s,m) => s+(m.earnings||0), 0);
+  const yearSess  = Object.values(byMonth).reduce((s,m) => s+m.sessions, 0);
+  const peakEntry = Object.entries(byMonth).reduce((a,[k,v]) => v.total > (a[1]?.total||0) ? [k,v] : a, [null,{total:0}]);
+
+  document.getElementById('calMetrics').innerHTML = `
+    <div class="cal-metric" style="background:#eff6ff;border-color:rgba(37,99,235,0.16);border-left:4px solid #2563eb;"><div class="lbl" style="color:#1e3a8a;">All-time EV spend</div><div class="val" style="color:#1d4ed8">£${allTime.toFixed(2)}</div><div class="sub">${allSess} sessions total</div></div>
+    <div class="cal-metric" style="background:#f0fdf4;border-color:rgba(22,163,74,0.16);border-left:4px solid #16a34a;"><div class="lbl" style="color:#166534;">${currentYear} earnings</div><div class="val" style="color:#15803d">£${yearEarn.toFixed(2)}</div><div class="sub" style="color:#2563eb;font-weight:600;">profit £${(yearEarn-yearTotal).toFixed(2)}</div></div>
+    <div class="cal-metric" style="background:#fff7ed;border-color:rgba(249,115,22,0.25);border-left:4px solid #f97316;"><div class="lbl" style="color:#9a3412;">${currentYear} EV spend</div><div class="val" style="color:#f97316">£${yearTotal.toFixed(2)}</div><div class="sub">${yearSess} sessions</div></div>
+    <div class="cal-metric" style="background:#f5f3ff;border-color:rgba(124,58,237,0.16);border-left:4px solid #7c3aed;"><div class="lbl" style="color:#5b21b6;">Peak month</div><div class="val" style="color:#6d28d9">${peakEntry[0]!=null&&peakEntry[1].total>0?MONTHS_FULL[parseInt(peakEntry[0])]:'—'}</div><div class="sub">${peakEntry[1].total>0?'£'+peakEntry[1].total.toFixed(2)+' spent':''}</div></div>
+  `;
+
+  const maxMonthVal = Math.max(...Object.values(byMonth).map(m=>m.total), 0.01);
+  const maxDayVal   = Math.max(...Object.values(byDay).map(d=>d.total), 0.01);
+  let html = '';
+  for (let mi = 0; mi < 12; mi++) {
+    const mData = byMonth[mi];
+    if (!mData || mData.sessions === 0) continue;
+    const col  = MONTH_COLOURS[mi];
+    const mPct = (mData.total / maxMonthVal * 100).toFixed(1);
+    let daysHtml = '';
+    const daysInMo = getDaysInMonth(currentYear, mi);
+    const weekRowsData = {};
+    for (let d = 1; d <= daysInMo; d++) {
+      const dk = `${currentYear}-${pad(mi+1)}-${pad(d)}`;
+      const wk = getWeekKeyForDate(dk);
+      if (!weekRowsData[wk]) weekRowsData[wk] = { earn:0, ev:0, wNum: wk.split('-W')[1] };
+      const dd = byDay[dk];
+      if (dd) { weekRowsData[wk].earn += dd.earnings||0; weekRowsData[wk].ev += dd.total||0; }
+    }
+    let renderedWeeks = new Set();
+    for (let d = 1; d <= daysInMo; d++) {
+      const dateKey = `${currentYear}-${pad(mi+1)}-${pad(d)}`;
+      const wk = getWeekKeyForDate(dateKey);
+      if (!renderedWeeks.has(wk) && weekRowsData[wk] && (weekRowsData[wk].earn > 0 || weekRowsData[wk].ev > 0)) {
+        renderedWeeks.add(wk);
+        const wr = weekRowsData[wk];
+        const profit = wr.earn - wr.ev;
+        const profCls = profit >= 0 ? 'profit-pos' : 'profit-neg';
+        daysHtml += `<div class="cal-week-row">
+          <span class="cal-week-label">Wk ${wr.wNum}</span>
+          <span class="cal-week-pill earn">↑ ${fmt(wr.earn)}</span>
+          <div class="cal-week-divider"></div>
+          <span class="cal-week-pill ev">⚡ ${fmt(wr.ev)}</span>
+          <div class="cal-week-divider"></div>
+          <span class="cal-week-pill ${profCls}">= ${fmt(profit)}</span>
+        </div>`;
+      }
+      const dData = byDay[dateKey];
+      if (!dData || (dData.sessions === 0 && !dData.earnings)) continue;
+      const dPct = (dData.total / maxDayVal * 100).toFixed(1);
+      const cpm  = dData.miles > 0 ? fmt(dData.total / dData.miles) : '—';
+      const profitTone = dData.profit >= 0 ? 'positive' : 'loss';
+      daysHtml += `<div class="day-row" onclick="toggleDayDetails(this)">
+        <span class="day-date" style="color:#334155">${pad(d)} ${MONTHS[mi]}</span>
+        <span class="day-sessions-badge" style="background:#f1f5f9;color:#475569">${dData.sessions}×</span>
+        <div class="day-bar-wrap"><div class="day-bar-fill" style="width:${dPct}%;background:${col.solid};opacity:0.45"></div></div>
+        <span class="day-amount" style="color:#111827">£${dData.total.toFixed(2)}</span>
+        <span class="day-earn">Earn £${(dData.earnings||0).toFixed(2)}</span>
+      </div>
+      <div class="day-details">
+        <div class="day-detail-row"><span class="day-detail-label">Earnings</span><span class="day-detail-val positive">£${(dData.earnings||0).toFixed(2)}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">EV charging cost</span><span class="day-detail-val loss">£${dData.total.toFixed(2)}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Net profit</span><span class="day-detail-val ${profitTone}" style="font-size:13px;font-weight:700;">£${dData.profit.toFixed(2)}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Sessions</span><span class="day-detail-val neutral">${dData.sessions}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Miles added</span><span class="day-detail-val info">${dData.miles?dData.miles+' mi':'—'}</span></div>
+        <div class="day-detail-row"><span class="day-detail-label">Cost per mile</span><span class="day-detail-val purple">${cpm}</span></div>
+        <div class="day-detail-row">
+          <span class="day-detail-label">Battery</span>
+          <span class="day-detail-val">${dData.batt.length>0
+            ?`<span style="color:#f97316;font-weight:700;">${dData.batt[0].before}%</span><span style="color:#94a3b8;margin:0 4px;">→</span><span style="color:#2563eb;font-weight:700;">${dData.batt[dData.batt.length-1].after}%</span>`
+            :'<span style="color:#94a3b8;">—</span>'}</span>
+        </div>
+      </div>`;
+    }
+    html += `<div class="month-accordion" style="border-left:4px solid ${col.solid};">
+      <div class="month-header" onclick="toggleMonth(this)">
+        <div class="month-header-left">
+          <div class="month-dot" style="background:${col.solid}"></div>
+          <span class="month-name-big" style="color:${col.text}">${MONTHS_FULL[mi]}</span>
+          <span class="month-pill" style="background:${col.pill};color:${col.pillText}">${mData.sessions} session${mData.sessions>1?'s':''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span class="month-total" style="color:${col.solid}">£${mData.total.toFixed(2)}</span>
+          <span class="month-chevron">▼</span>
+        </div>
+      </div>
+      <div class="month-bar-strip" style="background:${col.bg}"><div class="month-bar-strip-fill" style="width:${mPct}%;background:${col.solid}"></div></div>
+      <div class="month-days">${daysHtml}</div>
+    </div>`;
+  }
+  document.getElementById('calBody').innerHTML = html || `<div class="no-data">No charging records for ${currentYear} yet.</div>`;
+}
+
+function toggleMonth(header) {
+  const days    = header.closest('.month-accordion').querySelector('.month-days');
+  const chevron = header.querySelector('.month-chevron');
+  chevron.classList.toggle('open', days.classList.toggle('open'));
+}
+function toggleDayDetails(row) {
+  const details = row.nextElementSibling;
+  if (details && details.classList.contains('day-details')) details.classList.toggle('open');
+}
+function changeYear(delta) { currentYear += delta; renderCalendar(); }
+function printAsPDF() {
+  document.querySelectorAll('.month-days').forEach(el => el.classList.add('open'));
+  document.querySelectorAll('.day-details').forEach(el => el.classList.add('open'));
+  window.print();
+}
+
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.getElementById('chargeDate').value = dateToStr(todayDate);
+dateEl.addEventListener("change", () => { document.getElementById('chargeDate').value = dateEl.value; });
+renderWeek();
+renderSessions();
+</script>
+</body>
+</html>
