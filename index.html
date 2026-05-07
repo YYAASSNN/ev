@@ -198,6 +198,52 @@
   .btn-cancel:hover { background: #e9ebee; }
   .modal-section { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 18px 0 10px 2px; }
 
+  /* DESKTOP VIEW */
+  @media (min-width: 900px) {
+    body { padding: 32px 24px 80px; }
+    .tab-bar { max-width: 960px; }
+    .page { max-width: 960px; }
+    #page-tracker.active { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    #page-tracker .header { grid-column: 1 / -1; }
+    #page-tracker .section-label,
+    #page-tracker .card { margin-left: 0; margin-right: 0; }
+    .page.wide { max-width: 1100px; }
+    .cal-metrics { grid-template-columns: repeat(4, 1fr); }
+    .month-accordion { margin-bottom: 14px; }
+  }
+
+  /* MOBILE VIEW */
+  @media (max-width: 640px) {
+    body { padding: 14px 10px 48px; }
+    .tab-bar { position: sticky; top: 10px; z-index: 50; margin-bottom: 18px; }
+    .tab-btn { font-size: 12px; padding: 9px 6px; }
+    .header { flex-direction: column; align-items: stretch; gap: 14px; margin-bottom: 20px; }
+    .header-left { justify-content: flex-start; }
+    .date-input { width: 100%; padding: 10px 12px; font-size: 14px; }
+    .card { padding: 14px; }
+    .row2 { grid-template-columns: 1fr; }
+    .week-days-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .week-summary,
+    .dvp-summary-grid { grid-template-columns: 1fr; }
+    .week-hours-row { flex-wrap: wrap; }
+    .week-hours-input { flex: 1; min-width: 120px; }
+    .cal-metrics { grid-template-columns: 1fr; }
+    .cal-weekly-table { overflow-x: auto; }
+    .cal-weekly-table-header,
+    .cal-weekly-table-row,
+    .cal-weekly-footer { min-width: 620px; }
+    .month-header { padding: 13px 14px; }
+    .month-header-left { gap: 8px; min-width: 0; }
+    .month-name-big { font-size: 13px; }
+    .month-pill { display: none; }
+    .day-row { padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+    .day-date { width: auto; }
+    .day-bar-wrap { order: 5; width: 100%; flex-basis: 100%; margin-right: 0; }
+    .day-amount,
+    .day-earn { margin-left: auto; min-width: auto; }
+    .modal { padding: 18px; }
+  }
+
   @media print {
     body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .tab-bar, .modal-overlay, #page-tracker, .action-row, .clear-btn { display: none !important; }
@@ -243,52 +289,55 @@
     <input type="date" id="date" class="date-input">
   </div>
 
-  <div class="section-label">Weekly Earnings</div>
-  <div class="card">
-    <div class="week-nav">
-      <div class="week-nav-label" id="weekRangeLabel">Loading…</div>
-      <div class="week-nav-btns">
-        <button class="week-nav-btn" onclick="changeWeek(-1)">‹</button>
-        <button class="week-nav-btn" onclick="changeWeek(1)">›</button>
+  <div>
+    <div class="section-label">Weekly Earnings</div>
+    <div class="card">
+      <div class="week-nav">
+        <div class="week-nav-label" id="weekRangeLabel">Loading…</div>
+        <div class="week-nav-btns">
+          <button class="week-nav-btn" onclick="changeWeek(-1)">‹</button>
+          <button class="week-nav-btn" onclick="changeWeek(1)">›</button>
+        </div>
       </div>
-    </div>
-    <div class="week-days-grid" id="weekDaysGrid"></div>
-    <div class="week-summary">
-      <div class="week-stat ws-green"><div class="week-stat-label">Week total</div><div class="week-stat-val" id="weekTotal">£0.00</div></div>
-      <div class="week-stat ws-blue"><div class="week-stat-label">Week profit</div><div class="week-stat-val" id="weekProfit">£0.00</div></div>
-      <div class="week-stat"><div class="week-stat-label">Per hour</div><div class="week-stat-val" id="weekPerHour">—</div></div>
-    </div>
-    <div class="week-hours-row">
-      <span class="week-hours-label">Hours this week:</span>
-      <input type="number" class="week-hours-input" id="weekHours" placeholder="0" step="0.5" min="0">
-      <span class="week-hours-sub" id="weekHoursSub"></span>
+      <div class="week-days-grid" id="weekDaysGrid"></div>
+      <div class="week-summary">
+        <div class="week-stat ws-green"><div class="week-stat-label">Week total</div><div class="week-stat-val" id="weekTotal">£0.00</div></div>
+        <div class="week-stat ws-blue"><div class="week-stat-label">Week profit</div><div class="week-stat-val" id="weekProfit">£0.00</div></div>
+        <div class="week-stat"><div class="week-stat-label">Per hour</div><div class="week-stat-val" id="weekPerHour">—</div></div>
+      </div>
+      <div class="week-hours-row">
+        <span class="week-hours-label">Hours this week:</span>
+        <input type="number" class="week-hours-input" id="weekHours" placeholder="0" step="0.5" min="0">
+        <span class="week-hours-sub" id="weekHoursSub"></span>
+      </div>
     </div>
   </div>
 
-  <div class="section-label">EV Charging</div>
-  <div class="card charge-card">
-    <div class="field" style="margin-bottom:12px;">
-      <label style="display:flex;align-items:center;gap:6px;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        Charge date
-      </label>
-      <input id="chargeDate" type="date" style="width:100%;background:#eff6ff;border:1px solid rgba(37,99,235,0.28);border-radius:8px;color:#111827;font-family:'DM Mono',monospace;font-size:14px;padding:9px 12px;outline:none;cursor:pointer;transition:border-color 0.15s;" oninput="document.getElementById('date').value=this.value;renderSessions();">
+  <div>
+    <div class="section-label">EV Charging</div>
+    <div class="card charge-card">
+      <div class="field" style="margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Charge date
+        </label>
+        <input id="chargeDate" type="date" style="width:100%;background:#eff6ff;border:1px solid rgba(37,99,235,0.28);border-radius:8px;color:#111827;font-family:'DM Mono',monospace;font-size:14px;padding:9px 12px;outline:none;cursor:pointer;transition:border-color 0.15s;" oninput="document.getElementById('date').value=this.value;renderSessions();">
+      </div>
+      <div class="row2">
+        <div class="field"><label>Charge cost (£)</label><input id="charging" type="number" placeholder="15.90" step="0.01" min="0"></div>
+        <div class="field"><label>Miles added</label><input id="mileage" type="number" placeholder="222" step="1" min="0"></div>
+      </div>
+      <div class="row2" style="margin-top:10px;">
+        <div class="field"><label>Battery % before</label><input id="battBefore" type="number" placeholder="18" step="1" min="0" max="100"></div>
+        <div class="field"><label>Battery % after</label><input id="battAfter" type="number" placeholder="85" step="1" min="0" max="100"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Mileage before</label><input id="milesBefore" type="number" placeholder="42000" step="1" min="0"></div>
+        <div class="field"><label>Mileage after <span style="color:var(--text-muted);font-size:10px;">auto</span></label><input id="milesAfter" type="number" placeholder="42222" step="1" min="0"></div>
+      </div>
+      <button class="add-btn" onclick="addCharge()">+ Add charging session</button>
+      <div class="sessions-area" id="sessions-area"></div>
     </div>
-    <div class="row2">
-      <div class="field"><label>Charge cost (£)</label><input id="charging" type="number" placeholder="15.90" step="0.01" min="0"></div>
-      <div class="field"><label>Miles added</label><input id="mileage" type="number" placeholder="222" step="1" min="0"></div>
-    </div>
-    <div class="row2" style="margin-top:10px;">
-      <div class="field"><label>Battery % before</label><input id="battBefore" type="number" placeholder="18" step="1" min="0" max="100"></div>
-      <div class="field"><label>Battery % after</label><input id="battAfter" type="number" placeholder="85" step="1" min="0" max="100"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label>Mileage before</label><input id="milesBefore" type="number" placeholder="42000" step="1" min="0"></div>
-      <div class="field"><label>Mileage after <span style="color:var(--text-muted);font-size:10px;">auto</span></label><input id="milesAfter" type="number" placeholder="42222" step="1" min="0"></div>
-    </div>
-    <button class="add-btn" onclick="addCharge()">+ Add charging session</button>
-    <div class="sessions-area" id="sessions-area"></div>
-  </div>
   </div>
 </div>
 
@@ -457,7 +506,6 @@ function onWeekDayInput(input) {
   const days = getWeekDates(weekOffset);
   const wKey = isoWeekKey(days[0]);
   updateWeekSummary(days, wKey);
-  renderDateViewer();
 }
 
 function updateWeekSummary(days, wKey) {
@@ -539,9 +587,10 @@ function removeCharge(idx) {
   if (idx < 0) return;
   charges.splice(idx, 1);
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
-  renderSessions(); renderDateViewer();
+  renderSessions();
   const days = getWeekDates(weekOffset);
   updateWeekSummary(days, isoWeekKey(days[0]));
+  if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
 }
 
 function addCharge() {
@@ -557,7 +606,7 @@ function addCharge() {
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
   ["charging","mileage","battBefore","battAfter","milesBefore","milesAfter"].forEach(id => document.getElementById(id).value = "");
   document.getElementById("chargeDate").value = dateToStr(todayDate);
-  renderSessions(); renderDateViewer();
+  renderSessions();
   const days = getWeekDates(weekOffset);
   updateWeekSummary(days, isoWeekKey(days[0]));
 }
@@ -611,69 +660,10 @@ function saveSessionEdit() {
   c.milesAfter = document.getElementById('m_ma').value !== '' ? parseFloat(document.getElementById('m_ma').value) : null;
   c.date       = document.getElementById('m_date').value || c.date;
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
-  closeModal(); renderSessions(); renderDateViewer();
+  closeModal(); renderSessions();
   const days = getWeekDates(weekOffset);
   updateWeekSummary(days, isoWeekKey(days[0]));
   if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
-}
-
-function renderDateViewer() {
-  const dateKey = document.getElementById('viewerDate').value;
-  const body = document.getElementById('dateViewerBody');
-  if (!dateKey) {
-    body.innerHTML = '<div class="dvp-empty"><div class="dvp-empty-icon">📅</div>Pick a date above to see what\'s recorded for that day.</div>';
-    return;
-  }
-  const daySessions = charges.filter(c => c.date === dateKey);
-  const ds = dayStats[dateKey] || {};
-  const earnings = ds.earnings || 0;
-  const totalEv = daySessions.reduce((s,c) => s + (c.cost||0), 0);
-  const profit = earnings - totalEv;
-  const hasAnyData = earnings > 0 || daySessions.length > 0;
-
-  if (!hasAnyData) {
-    body.innerHTML = `<div class="dvp-empty"><div class="dvp-empty-icon">🔍</div>No data recorded for <strong>${formatDateDisplay(dateKey)}</strong>.</div>`;
-    return;
-  }
-
-  const profitStatCls = profit > 0 ? 'green' : profit < 0 ? 'red' : '';
-
-  let chargesHtml = '';
-  if (daySessions.length > 0) {
-    chargesHtml = `<div class="dvp-section-label">Charging sessions (${daySessions.length})</div>`;
-    daySessions.forEach((c, i) => {
-      const realIdx = findChargeIndex(dateKey, i);
-      let meta = [];
-      if (c.mileage) meta.push(`${c.mileage} mi`);
-      if (c.milesBefore != null) meta.push(`Odometer: ${c.milesBefore.toLocaleString()}`);
-      let battStr = '';
-      if (c.battBefore != null && c.battAfter != null)
-        battStr = `<span style="color:#f97316;font-weight:600;">${c.battBefore}%</span> → <span style="color:#2563eb;font-weight:600;">${c.battAfter}%</span>`;
-      chargesHtml += `<div class="dvp-charge-item">
-        <div class="dvp-charge-left">
-          <span class="dvp-charge-cost">${fmt(c.cost)}</span>
-          ${meta.length ? `<span class="dvp-charge-meta">${meta.join(' · ')}</span>` : ''}
-          ${battStr ? `<span class="dvp-charge-batt">${battStr}</span>` : ''}
-        </div>
-        <div class="dvp-charge-actions">
-          <button class="dvp-edit-btn" onclick="openSessionEdit(${realIdx})">Edit</button>
-          <button class="dvp-del-btn" onclick="removeCharge(${realIdx})">Delete</button>
-        </div>
-      </div>`;
-    });
-  } else {
-    chargesHtml = `<div class="dvp-section-label">Charging sessions</div><div style="font-size:12px;color:var(--text-muted);padding:6px 0;">No charging sessions for this date.</div>`;
-  }
-
-  body.innerHTML = `
-    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;font-family:'DM Mono',monospace;">${formatDateDisplay(dateKey)}</div>
-    <div class="dvp-summary-grid">
-      <div class="dvp-stat green"><div class="dvp-stat-label">Earnings</div><div class="dvp-stat-val">${fmt(earnings)}</div></div>
-      <div class="dvp-stat blue"><div class="dvp-stat-label">EV cost</div><div class="dvp-stat-val">${fmt(totalEv)}</div></div>
-      <div class="dvp-stat ${profitStatCls}"><div class="dvp-stat-label">Net profit</div><div class="dvp-stat-val">${fmt(profit)}</div></div>
-    </div>
-    ${chargesHtml}
-  `;
 }
 
 function formatDateDisplay(dateKey) {
@@ -690,7 +680,7 @@ function clearAll() {
       localStorage.removeItem("ev_day_stats");
       localStorage.removeItem("ev_week_stats");
     } catch(e) {}
-    renderWeek(); renderSessions(); renderDateViewer();
+    renderWeek(); renderSessions(); renderCalendar();
   }
 }
 
@@ -785,7 +775,6 @@ function renderWeeklyTable(year, byDay) {
   }).join('');
   document.getElementById('calWeeklyTableBody').innerHTML = rows;
 
-  // Only show the Total footer row when there are 2 or more weeks
   if (sortedWeeks.length > 1) {
     const totalProfit = totalEarn - totalEv;
     const profCls = totalProfit >= 0 ? 'profit-pos' : 'profit-neg';
@@ -810,52 +799,12 @@ function renderCalendar() {
   const allSess   = charges.length;
   const yearTotal = Object.values(byMonth).reduce((s,m) => s+m.total, 0);
   const yearEarn  = Object.values(byMonth).reduce((s,m) => s+(m.earnings||0), 0);
-  const yearSess  = Object.values(byMonth).reduce((s,m) => s+m.sessions, 0);
-  const peakEntry = Object.entries(byMonth).reduce((a,[k,v]) => v.total > (a[1]?.total||0) ? [k,v] : a, [null,{total:0}]);
   const yearProfit = yearEarn - yearTotal;
-
-  // Build peak month label — if data spans a week crossing two months show "Apr 27 – May 3" style
+  const peakEntry = Object.entries(byMonth).reduce((a,[k,v]) => v.total > (a[1]?.total||0) ? [k,v] : a, [null,{total:0}]);
   let peakLabel = '—', peakSub = '';
   if (peakEntry[0] != null && peakEntry[1].total > 0) {
     const pmi = parseInt(peakEntry[0]);
-    // Check if any charge dates in this month fall in a week that also covers the next month
-    const daysInPeak = getDaysInMonth(currentYear, pmi);
-    const lastDay = `${currentYear}-${pad(pmi+1)}-${pad(daysInPeak)}`;
-    const lastDayObj = new Date(lastDay + 'T00:00:00');
-    const nextMonthHasCharges = charges.some(c => {
-      if (!c.date) return false;
-      const [cy, cm] = c.date.split('-').map(Number);
-      return cy === currentYear && cm === pmi + 2; // next month (1-indexed)
-    });
-    const prevMonthHasCharges = charges.some(c => {
-      if (!c.date) return false;
-      const [cy, cm] = c.date.split('-').map(Number);
-      return cy === currentYear && cm === pmi; // prev month (1-indexed)
-    });
-    // Find the actual date range of charges in this peak month
-    const peakCharges = charges.filter(c => {
-      if (!c.date) return false;
-      const [cy, cm] = c.date.split('-').map(Number);
-      return cy === currentYear && cm === pmi + 1;
-    });
-    const peakEarnDates = Object.keys(dayStats).filter(d => {
-      const [cy, cm] = d.split('-').map(Number);
-      return cy === currentYear && cm === pmi + 1 && dayStats[d].earnings > 0;
-    });
-    const allPeakDates = [...new Set([...peakCharges.map(c=>c.date), ...peakEarnDates])].sort();
-    if (allPeakDates.length > 0) {
-      const firstDate = allPeakDates[0];
-      const lastDate  = allPeakDates[allPeakDates.length - 1];
-      const [,fm,fd] = firstDate.split('-').map(Number);
-      const [,lm,ld] = lastDate.split('-').map(Number);
-      if (fm !== lm) {
-        peakLabel = `${MONTHS[fm-1]} ${fd} – ${MONTHS[lm-1]} ${ld}`;
-      } else {
-        peakLabel = MONTHS_FULL[pmi];
-      }
-    } else {
-      peakLabel = MONTHS_FULL[pmi];
-    }
+    peakLabel = MONTHS_FULL[pmi];
     peakSub = `£${peakEntry[1].total.toFixed(2)} spent`;
   }
 
@@ -903,7 +852,6 @@ function renderCalendar() {
         </div>`;
       }
       const dData = byDay[dateKey];
-      // Only show days that have EV charging sessions
       if (!dData || dData.sessions === 0) continue;
       const dPct = (dData.total / maxDayVal * 100).toFixed(1);
       const profitTone = dData.profit >= 0 ? 'positive' : 'loss';
