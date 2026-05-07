@@ -585,6 +585,19 @@ function renderSessions() {
 
 function removeCharge(idx) {
   if (idx < 0) return;
+
+  const charge = charges[idx];
+  const confirmed = confirm(
+    `Delete this charging session?\n\n` +
+    `Cost: ${fmt(charge.cost)}\n` +
+    `${charge.mileage ? `Miles: ${charge.mileage}mi\n` : ''}` +
+    `${charge.battBefore != null && charge.battAfter != null
+      ? `Battery: ${charge.battBefore}% → ${charge.battAfter}%`
+      : ''}`
+  );
+
+  if (!confirmed) return;
+
   charges.splice(idx, 1);
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
   renderSessions();
