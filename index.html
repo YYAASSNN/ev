@@ -11,13 +11,12 @@
     --bg: #f6f7f8; --bg-card: #ffffff; --bg-input: #f3f4f6;
     --border: rgba(15,23,42,0.10); --border-focus: rgba(15,23,42,0.32);
     --text-primary: #111827; --text-secondary: #64748b; --text-muted: #94a3b8;
-    --green: #15803d; --green-bg: #f0fdf4; --green-mid: #86efac;
-    --red: #b91c1c; --red-bg: #fef2f2; --red-mid: #fca5a5; --red-dim: rgba(185,28,28,0.06);
-    --amber: #92400e; --amber-bg: #fffbeb; --amber-mid: #fde68a;
-    --orange: #f97316; --orange-bg: #fff7ed; --orange-soft: #fed7aa;
-    --accent: #0f766e; --accent-dim: rgba(15,118,110,0.07);
-    --blue: #2563eb; --blue-bg: #eff6ff; --blue-mid: #bfdbfe;
-    --purple: #7c3aed; --purple-bg: #f5f3ff; --purple-mid: #ddd6fe;
+    --green: #15803d; --green-bg: #f0fdf4;
+    --red: #b91c1c; --red-bg: #fef2f2; --red-dim: rgba(185,28,28,0.06);
+    --orange: #f97316;
+    --accent: #0f766e;
+    --blue: #2563eb; --blue-bg: #eff6ff;
+    --purple: #7c3aed; --purple-bg: #f5f3ff;
     --radius: 14px; --radius-sm: 8px;
   }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; padding: 24px 16px 60px; }
@@ -37,7 +36,7 @@
   .date-input { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); font-family: 'DM Mono', monospace; font-size: 12px; padding: 7px 10px; outline: none; cursor: pointer; }
   .date-input:focus { border-color: var(--border-focus); color: var(--text-primary); }
   .section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 22px 0 10px 2px; }
-  .card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); transition: border-color 0.3s; }
+  .card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
   .field { margin-bottom: 14px; }
   .field:last-child { margin-bottom: 0; }
   .field label { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 6px; }
@@ -50,87 +49,46 @@
   .sessions-area { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .session-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 100px; font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text-secondary); padding: 4px 10px 4px 12px; }
   .session-tag .s-cost { color: var(--text-primary); font-weight: 500; }
-  .session-tag .s-miles { color: var(--text-secondary); }
-  .session-tag .s-batt { color: var(--text-secondary); }
   .session-tag .remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; display: flex; align-items: center; transition: color 0.1s; }
   .session-tag .remove:hover { color: var(--red); }
   .session-tag .edit-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; line-height: 1; padding: 0; display: flex; align-items: center; transition: color 0.1s; }
   .session-tag .edit-btn:hover { color: var(--blue); }
-
-  .result-card { transition: background 0.4s, border-color 0.4s; }
-  .result-card.state-profit { background: var(--bg-card); border-color: rgba(21,128,61,0.22); }
-  .result-card.state-loss   { background: var(--bg-card); border-color: rgba(185,28,28,0.22); }
-  .result-card.state-zero   { background: var(--bg-card); border-color: var(--border); }
-
-  .profit-display { text-align: center; padding: 8px 0 18px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-  .profit-badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; padding: 3px 10px; border-radius: 99px; margin-bottom: 10px; }
-  .profit-badge.profit { background: var(--green-bg); color: var(--green); }
-  .profit-badge.loss   { background: var(--red-bg); color: var(--red); }
-  .profit-badge.zero   { background: var(--bg-input); color: var(--text-muted); }
-  .profit-amount { font-family: 'DM Mono', monospace; font-size: 48px; font-weight: 500; line-height: 1; transition: color 0.3s; }
-  .profit-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
-  .p-pos { color: var(--green); } .p-neg { color: var(--red); } .p-zero { color: var(--text-muted); }
-
-  .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .metric { border-radius: var(--radius-sm); padding: 12px 14px; }
-  .metric-label { font-size: 11px; margin-bottom: 5px; font-weight: 500; }
-  .metric-value { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; }
-  .metric.m-profit  { background: var(--green-bg); } .metric.m-profit .metric-label { color: #166534; } .metric.m-profit .metric-value { color: var(--green); }
-  .metric.m-loss    { background: var(--red-bg);   } .metric.m-loss   .metric-label { color: #991b1b; } .metric.m-loss   .metric-value { color: var(--red); }
-  .metric.m-neutral { background: var(--bg-input); } .metric.m-neutral .metric-label { color: var(--text-muted); } .metric.m-neutral .metric-value { color: var(--text-primary); }
-  .metric.m-charge  { background: var(--blue-bg); border-left: 3px solid var(--blue); } .metric.m-charge  .metric-label { color: var(--text-secondary); } .metric.m-charge  .metric-value { color: var(--blue); }
-  .metric.m-purple  { background: var(--purple-bg); border-left: 3px solid var(--purple); } .metric.m-purple  .metric-label { color: var(--text-secondary); } .metric.m-purple  .metric-value { color: var(--purple); }
-
-  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-  .stat-row:last-child { border-bottom: none; }
-  .stat-label { color: var(--text-secondary); }
-  .stat-val { font-family: 'DM Mono', monospace; font-weight: 500; }
-  .sv-green  { color: var(--green); }
-  .sv-red    { color: var(--red); }
-  .sv-blue   { color: var(--blue); }
-  .sv-muted  { color: var(--text-muted); }
-
-  .batt-block { margin-bottom: 16px; padding: 14px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border); }
-  .batt-title { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
-  .batt-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .batt-box { background: #ffffff; border-radius: var(--radius-sm); padding: 10px 12px; border: 1px solid rgba(0,0,0,0.06); }
-  .batt-box-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
-  .batt-box-val { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 500; }
-  .batt-box-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-  .batt-arrow { color: var(--orange); font-size: 18px; text-align: center; font-weight: 600; }
-  .batt-box.before .batt-box-val { color: #475569; }
-  .batt-box.after  .batt-box-val { color: var(--blue); font-weight: 600; }
-  .batt-box.before.tone-red .batt-box-val { color: var(--red); font-weight: 600; }
-  .batt-box.before.tone-orange .batt-box-val { color: var(--orange); font-weight: 600; }
-  .batt-box.before.tone-muted .batt-box-val { color: #475569; }
-  .batt-box.after.tone-good .batt-box-val { color: var(--green); font-weight: 600; }
-  .batt-box.after.tone-blue .batt-box-val { color: var(--blue); font-weight: 600; }
-  .batt-bar-wrap { margin-top: 4px; height: 6px; background: #e5e7eb; border-radius: 99px; overflow: hidden; }
-  .batt-bar { height: 100%; border-radius: 99px; transition: width 0.4s, background 0.25s; }
-  .batt-bar.before { background: #94a3b8; }
-  .batt-box.before.tone-red .batt-bar.before { background: var(--red); }
-  .batt-box.before.tone-orange .batt-bar.before { background: var(--orange); }
-  .batt-box.before.tone-muted .batt-bar.before { background: #94a3b8; }
-  .batt-bar.after  { background: var(--blue); }
-  .batt-box.after.tone-good .batt-bar.after { background: var(--green); }
-  .batt-box.after.tone-blue .batt-bar.after { background: var(--blue); }
-  #dispMilesDiff { color: var(--blue); font-weight: 500; }
-
-  .ev-summary-card { background: var(--bg-card); border: 0.5px solid var(--border); border-left: 3px solid var(--blue); }
+  .week-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .week-nav-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+  .week-nav-btns { display: flex; gap: 4px; }
+  .week-nav-btn { background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); font-size: 13px; padding: 4px 10px; cursor: pointer; transition: background 0.12s; line-height: 1; }
+  .week-nav-btn:hover { background: #e5e7eb; color: var(--text-primary); }
+  .week-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 14px; }
+  .week-day-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .week-day-label { font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #111827; }
+  .week-day-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 12px; padding: 7px 4px; text-align: center; outline: none; transition: border-color 0.15s, background 0.15s; -moz-appearance: textfield; }
+  .week-day-input::-webkit-outer-spin-button, .week-day-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .week-day-input:focus { border-color: var(--border-focus); background: #fff; }
+  .week-day-input.today-input { border-color: rgba(37,99,235,0.35); background: #eff6ff; }
+  .week-day-input.has-value { border-color: rgba(21,128,61,0.3); }
+  .week-day-date { font-size: 9px; color: #1e293b; font-family: 'DM Mono', monospace; font-weight: 700; }
+  .week-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+  .week-stat { background: var(--bg-input); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .week-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .week-stat-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text-primary); }
+  .week-stat.ws-green { background: var(--green-bg); }
+  .week-stat.ws-green .week-stat-label { color: #166534; }
+  .week-stat.ws-green .week-stat-val { color: var(--green); }
+  .week-stat.ws-blue { background: #fff7ed; border-left: 3px solid var(--orange); }
+  .week-stat.ws-blue .week-stat-label { color: #9a3412; }
+  .week-stat.ws-blue .week-stat-val { color: var(--orange); }
+  .week-hours-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .week-hours-label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+  .week-hours-input { width: 80px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 14px; padding: 8px 10px; outline: none; transition: border-color 0.15s; -moz-appearance: textfield; }
+  .week-hours-input::-webkit-outer-spin-button, .week-hours-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .week-hours-input:focus { border-color: var(--border-focus); }
+  .week-hours-sub { font-size: 11px; color: var(--text-muted); }
   .clear-btn { width: 100%; padding: 10px; background: transparent; border: 1px solid rgba(220,38,38,0.25); border-radius: var(--radius-sm); color: var(--red); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 14px; transition: background 0.15s; }
   .clear-btn:hover { background: var(--red-dim); }
-
   .charge-card { background: var(--bg-card); border: 0.5px solid var(--border); }
-  .charge-card .field input:focus { border-color: var(--border-focus); }
-
-  /* PDF & Download buttons */
   .action-row { display: flex; gap: 8px; margin-bottom: 18px; }
   .pdf-btn { flex: 1; padding: 10px 14px; background: #f0fdf4; border: 1px solid rgba(21,128,61,0.25); border-radius: var(--radius-sm); color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.15s; }
   .pdf-btn:hover { background: #dcfce7; }
-  .dl-btn { flex: 1; padding: 10px 14px; background: var(--blue-bg); border: 1px solid rgba(37,99,235,0.25); border-radius: var(--radius-sm); color: var(--blue); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.15s; }
-  .dl-btn:hover { background: #dbeafe; }
-
-  /* Calendar */
   .cal-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; margin-bottom: 24px; }
   .cal-metric { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
   .cal-metric .lbl { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
@@ -154,7 +112,7 @@
   .month-bar-strip-fill { height: 100%; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
   .month-days { display: none; border-top: 0.5px solid var(--border); }
   .month-days.open { display: block; }
-  .day-row { display: flex; align-items: center; padding: 10px 18px; border-bottom: 0.5px solid var(--border); cursor: pointer; position: relative; transition: background 0.12s; }
+  .day-row { display: flex; align-items: center; padding: 10px 18px; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.12s; }
   .day-row:last-child { border-bottom: none; }
   .day-row:hover { background: var(--bg-input); }
   .day-date { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; width: 58px; flex-shrink: 0; }
@@ -163,24 +121,68 @@
   .day-bar-fill { height: 100%; border-radius: 99px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
   .day-amount { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600; text-align: right; min-width: 64px; }
   .day-earn { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--green); min-width: 76px; text-align: right; margin-left: 10px; }
-  .day-edit-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 2px 8px; margin-left: 8px; transition: all 0.12s; white-space: nowrap; flex-shrink: 0; }
-  .day-edit-btn:hover { background: var(--blue-bg); color: var(--blue); border-color: rgba(37,99,235,0.3); }
   .day-details { display: none; background: #f8fafc; border-top: 1px solid var(--border); padding: 12px 18px; }
   .day-details.open { display: block; }
   .day-detail-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; padding: 4px 0; }
   .day-detail-label { color: var(--text-secondary); }
   .day-detail-val { font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text-primary); }
-  .day-detail-val.positive { color: var(--green); }
-  .day-detail-val.loss { color: var(--red); }
-  .day-detail-val.warning { color: var(--amber); }
-  .day-detail-val.info { color: var(--blue); }
-  .day-detail-val.neutral { color: #334155; }
-  .day-detail-val.teal   { color: #0f766e; }
-  .day-detail-val.slate  { color: #475569; }
+  .day-detail-val.positive { color: var(--green); } .day-detail-val.loss { color: var(--red); }
+  .day-detail-val.info { color: var(--blue); } .day-detail-val.neutral { color: #334155; }
   .day-detail-val.purple { color: #6d28d9; }
   .no-data { text-align: center; padding: 32px; color: var(--text-muted); font-size: 13px; background: var(--bg-card); border-radius: 12px; border: 0.5px dashed rgba(0,0,0,0.12); }
+  .cal-week-row { display: flex; align-items: center; padding: 10px 18px; background: #f0f4ff; border-bottom: 0.5px solid var(--border); gap: 8px; flex-wrap: wrap; border-left: 3px solid #2563eb; }
+  .cal-week-label { font-size: 11px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #1e293b; width: 54px; flex-shrink: 0; }
+  .cal-week-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-family: 'DM Mono', monospace; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+  .cal-week-pill.earn { background: #f0fdf4; color: #15803d; border: 1px solid rgba(21,128,61,0.2); }
+  .cal-week-pill.ev   { background: #fff7ed; color: #ea580c; border: 1px solid rgba(249,115,22,0.25); }
+  .cal-week-pill.profit-pos { background: #f0fdf4; color: #15803d; border: 1px solid rgba(21,128,61,0.25); font-weight: 700; }
+  .cal-week-pill.profit-neg { background: #fef2f2; color: #b91c1c; border: 1px solid rgba(185,28,28,0.2); font-weight: 700; }
+  .cal-week-divider { width: 1px; height: 16px; background: var(--border); flex-shrink: 0; }
+  .cal-weekly-table { width: 100%; margin-bottom: 20px; background: var(--bg-card); border-radius: var(--radius); border: 0.5px solid var(--border); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .cal-weekly-table-header { display: grid; grid-template-columns: 80px 1fr 1fr 1fr 1fr; background: #1e293b; padding: 10px 18px; }
+  .cwth { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #e2e8f0; text-align: right; }
+  .cwth:first-child { text-align: left; }
+  .cal-weekly-table-row { display: grid; grid-template-columns: 80px 1fr 1fr 1fr 1fr; padding: 9px 18px; border-bottom: 0.5px solid var(--border); transition: background 0.1s; }
+  .cal-weekly-table-row:last-child { border-bottom: none; }
+  .cal-weekly-table-row:hover { background: var(--bg-input); }
+  .cwtd { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; text-align: right; color: var(--text-primary); display: flex; align-items: center; justify-content: flex-end; }
+  .cwtd:first-child { text-align: left; justify-content: flex-start; color: #1e293b; font-weight: 700; font-size: 11px; }
+  .cwtd.earn-val { color: var(--green); } .cwtd.ev-val { color: var(--orange); }
+  .cwtd.profit-pos { color: var(--green); font-weight: 700; } .cwtd.profit-neg { color: var(--red); font-weight: 700; }
+  .cwtd.hours-val { color: #475569; }
+  .cal-weekly-footer { display: grid; grid-template-columns: 80px 1fr 1fr 1fr 1fr; padding: 10px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+  .cwtf { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700; text-align: right; color: var(--text-primary); }
+  .cwtf:first-child { text-align: left; color: #334155; font-size: 11px; }
+  .cwtf.earn-val { color: var(--green); } .cwtf.ev-val { color: var(--orange); }
+  .cwtf.profit-pos { color: var(--green); } .cwtf.profit-neg { color: var(--red); }
 
-  /* ── Edit Modal ── */
+  .dvp-empty { text-align: center; padding: 28px 0; color: var(--text-muted); font-size: 13px; }
+  .dvp-empty-icon { font-size: 28px; margin-bottom: 8px; }
+  .dvp-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .dvp-stat { background: var(--bg-input); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .dvp-stat.green { background: var(--green-bg); }
+  .dvp-stat.blue  { background: #fff7ed; border-left: 3px solid var(--orange); }
+  .dvp-stat.red   { background: var(--red-bg); border-left: 3px solid var(--red); }
+  .dvp-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .dvp-stat.green .dvp-stat-label { color: #166534; }
+  .dvp-stat.blue  .dvp-stat-label { color: #9a3412; }
+  .dvp-stat.red   .dvp-stat-label { color: #991b1b; }
+  .dvp-stat-val { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .dvp-stat.green .dvp-stat-val { color: var(--green); }
+  .dvp-stat.blue  .dvp-stat-val { color: var(--orange); }
+  .dvp-stat.red   .dvp-stat-val { color: var(--red); }
+  .dvp-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin: 14px 0 8px 0; }
+  .dvp-charge-item { background: var(--bg-input); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .dvp-charge-left { display: flex; flex-direction: column; gap: 3px; }
+  .dvp-charge-cost { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 600; color: var(--orange); }
+  .dvp-charge-meta { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+  .dvp-charge-batt { font-size: 11px; font-family: 'DM Mono', monospace; }
+  .dvp-charge-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .dvp-edit-btn { background: var(--blue-bg); border: 1px solid rgba(37,99,235,0.2); border-radius: 6px; color: var(--blue); font-size: 11px; font-weight: 500; padding: 4px 10px; cursor: pointer; transition: background 0.1s; }
+  .dvp-edit-btn:hover { background: #dbeafe; }
+  .dvp-del-btn { background: var(--red-bg); border: 1px solid rgba(185,28,28,0.2); border-radius: 6px; color: var(--red); font-size: 11px; font-weight: 500; padding: 4px 10px; cursor: pointer; transition: background 0.1s; }
+  .dvp-del-btn:hover { background: #fecaca; }
+
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
   .modal-overlay.open { display: flex; }
   .modal { background: #ffffff; border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.18); width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto; padding: 24px; }
@@ -196,52 +198,17 @@
   .btn-cancel:hover { background: #e9ebee; }
   .modal-section { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 18px 0 10px 2px; }
 
-  /* Print styles for PDF */
   @media print {
-    .tab-bar, .add-btn, .session-tag .remove, .session-tag .edit-btn, .clear-btn, .pdf-btn, .dl-btn, .action-row, .day-edit-btn { display: none !important; }
     body { padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .page { display: block !important; max-width: 100%; }
-    .card, .month-accordion { box-shadow: none; }
+    .tab-bar, .modal-overlay, #page-tracker, .action-row, .clear-btn { display: none !important; }
+    #page-calendar { display: block !important; max-width: 100%; }
     .month-days { display: block !important; }
     .day-details { display: block !important; }
-    .field input {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-      background: #f3f4f6 !important;
-      background-color: #f3f4f6 !important;
-      border: 1px solid rgba(15,23,42,0.10) !important;
-      border-radius: 8px !important;
-      padding: 10px 12px !important;
-    }
-    .metric, .cal-metric, .batt-box, .batt-block {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    .metric.m-profit  { background: #f0fdf4 !important; }
-    .metric.m-loss    { background: #fef2f2 !important; }
-    .metric.m-neutral { background: #f3f4f6 !important; }
-    .metric.m-charge  { background: #eff6ff !important; }
-    .metric.m-purple  { background: #f5f3ff !important; }
-    .session-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #f3f4f6 !important; }
-    .day-bar-fill, .month-bar-strip-fill, .batt-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .batt-block { background: #f8fafc !important; }
-    .day-details { background: #f8fafc !important; }
-    /* Bold text only — no colour changes */
-    body, .card, .metric, .stat-row, .field label,
-    .section-label, .batt-title, .batt-box-label,
-    .day-detail-label, .month-name-big, .month-pill,
-    .cal-metric .lbl, .cal-metric .sub, .profit-sub,
-    .header-title, .header-sub, .session-tag,
-    .s-cost, .s-miles, .s-batt, .field input { font-weight: 600 !important; }
-    .profit-amount, .stat-val, .metric-value, .batt-box-val,
-    .day-amount, .day-earn, .month-total, .cal-metric .val,
-    .year-label, .day-date, .profit-badge, .day-detail-val { font-weight: 700 !important; }
   }
 </style>
 </head>
 <body>
 
-<!-- Edit Modal -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-header">
@@ -261,6 +228,7 @@
   <button class="tab-btn" onclick="showTab('calendar',this)">📅 Performance Calendar</button>
 </div>
 
+<!-- DAILY TRACKER -->
 <div class="page active" id="page-tracker">
   <div class="header">
     <div class="header-left">
@@ -275,16 +243,37 @@
     <input type="date" id="date" class="date-input">
   </div>
 
-  <div class="section-label">Earnings</div>
+  <div class="section-label">Weekly Earnings</div>
   <div class="card">
-    <div class="row2">
-      <div class="field"><label>Today's earnings (£)</label><input id="earnings" type="number" placeholder="255.00" step="0.01" min="0"></div>
-      <div class="field"><label>Hours worked</label><input id="hours" type="number" placeholder="8.5" step="0.1" min="0"></div>
+    <div class="week-nav">
+      <div class="week-nav-label" id="weekRangeLabel">Loading…</div>
+      <div class="week-nav-btns">
+        <button class="week-nav-btn" onclick="changeWeek(-1)">‹</button>
+        <button class="week-nav-btn" onclick="changeWeek(1)">›</button>
+      </div>
+    </div>
+    <div class="week-days-grid" id="weekDaysGrid"></div>
+    <div class="week-summary">
+      <div class="week-stat ws-green"><div class="week-stat-label">Week total</div><div class="week-stat-val" id="weekTotal">£0.00</div></div>
+      <div class="week-stat ws-blue"><div class="week-stat-label">Week profit</div><div class="week-stat-val" id="weekProfit">£0.00</div></div>
+      <div class="week-stat"><div class="week-stat-label">Per hour</div><div class="week-stat-val" id="weekPerHour">—</div></div>
+    </div>
+    <div class="week-hours-row">
+      <span class="week-hours-label">Hours this week:</span>
+      <input type="number" class="week-hours-input" id="weekHours" placeholder="0" step="0.5" min="0">
+      <span class="week-hours-sub" id="weekHoursSub"></span>
     </div>
   </div>
 
   <div class="section-label">EV Charging</div>
   <div class="card charge-card">
+    <div class="field" style="margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:6px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Charge date
+      </label>
+      <input id="chargeDate" type="date" style="width:100%;background:#eff6ff;border:1px solid rgba(37,99,235,0.28);border-radius:8px;color:#111827;font-family:'DM Mono',monospace;font-size:14px;padding:9px 12px;outline:none;cursor:pointer;transition:border-color 0.15s;" oninput="document.getElementById('date').value=this.value;renderSessions();">
+    </div>
     <div class="row2">
       <div class="field"><label>Charge cost (£)</label><input id="charging" type="number" placeholder="15.90" step="0.01" min="0"></div>
       <div class="field"><label>Miles added</label><input id="mileage" type="number" placeholder="222" step="1" min="0"></div>
@@ -300,44 +289,10 @@
     <button class="add-btn" onclick="addCharge()">+ Add charging session</button>
     <div class="sessions-area" id="sessions-area"></div>
   </div>
-
-  <div class="section-label">Today's result</div>
-  <div class="card result-card state-zero" id="resultCard">
-    <div class="profit-display">
-      <div class="profit-badge zero" id="profitBadge">Awaiting input</div>
-      <div class="profit-amount p-zero" id="profit">£0.00</div>
-      <div class="profit-sub" id="profitSub">after EV charging</div>
-    </div>
-    <div class="metrics-grid">
-      <div class="metric m-neutral" id="mPerHour"><div class="metric-label">Per hour</div><div class="metric-value" id="perHour">—</div></div>
-      <div class="metric m-charge"  id="mPercent"><div class="metric-label">Charging %</div><div class="metric-value" id="percent">—</div></div>
-      <div class="metric m-charge"  id="mEv"><div class="metric-label">EV cost today</div><div class="metric-value" id="todayEv">£0.00</div></div>
-      <div class="metric m-purple"  id="mMile"><div class="metric-label">Cost per mile</div><div class="metric-value" id="mile">—</div></div>
-    </div>
-
-    <div class="batt-block" id="battBlock" style="display:none;">
-      <div class="batt-title">Charging session summary</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Battery %</div>
-      <div class="batt-row">
-        <div class="batt-box before"><div class="batt-box-label">Before</div><div class="batt-box-val" id="dispBattBefore">—</div><div class="batt-bar-wrap"><div class="batt-bar before" id="barBefore" style="width:0%"></div></div></div>
-        <div class="batt-arrow">→</div>
-        <div class="batt-box after"><div class="batt-box-label">After</div><div class="batt-box-val" id="dispBattAfter">—</div><div class="batt-bar-wrap"><div class="batt-bar after" id="barAfter" style="width:0%"></div></div></div>
-      </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;margin-top:4px;">Mileage</div>
-      <div class="batt-row">
-        <div class="batt-box before"><div class="batt-box-label">Before</div><div class="batt-box-val" id="dispMilesBefore">—</div></div>
-        <div class="batt-arrow">→</div>
-        <div class="batt-box after"><div class="batt-box-label">After</div><div class="batt-box-val" id="dispMilesAfter">—</div><div class="batt-box-sub" id="dispMilesDiff"></div></div>
-      </div>
-    </div>
-
-    <div class="stat-row"><span class="stat-label">Earnings</span><span class="stat-val sv-green" id="showEarnings">£0.00</span></div>
-    <div class="stat-row"><span class="stat-label">EV charging cost</span><span class="stat-val sv-blue" id="showEv">£0.00</span></div>
-    <div class="stat-row"><span class="stat-label">Sessions today</span><span class="stat-val sv-blue" id="todayCount">0</span></div>
-    <div class="stat-row"><span class="stat-label" style="font-weight:600;">Net profit</span><span class="stat-val" id="showProfit" style="font-size:15px;">£0.00</span></div>
   </div>
 </div>
 
+<!-- PERFORMANCE CALENDAR -->
 <div class="page wide" id="page-calendar">
   <div class="header">
     <div class="header-left">
@@ -346,17 +301,45 @@
       </div>
       <div>
         <div class="header-title">Performance Calendar</div>
-        <div class="header-sub">Click a day to view earnings and profit</div>
+        <div class="header-sub">Weekly earnings + charging spend at a glance</div>
       </div>
     </div>
   </div>
   <div class="cal-metrics" id="calMetrics"></div>
 
-  <!-- PDF action -->
-  <div class="action-row">
-    <button class="pdf-btn" onclick="printAsPDF()">🖨️ Save as PDF</button>
+  <div style="margin-bottom:6px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Weekly breakdown — <span id="calWeeklyYear"></span></div>
+    <div class="cal-weekly-table">
+      <div class="cal-weekly-table-header">
+        <div class="cwth" style="text-align:left;">Week</div>
+        <div class="cwth">Weekly earn</div>
+        <div class="cwth">EV spend</div>
+        <div class="cwth">Net profit</div>
+        <div class="cwth">Hours</div>
+      </div>
+      <div id="calWeeklyTableBody"></div>
+      <div class="cal-weekly-footer" id="calWeeklyFooter"></div>
+    </div>
   </div>
 
+  <div style="margin-bottom:6px;margin-top:8px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Monthly breakdown — <span id="calMonthlyYear"></span></div>
+    <div class="cal-weekly-table">
+      <div class="cal-weekly-table-header" style="grid-template-columns:100px 1fr 1fr 1fr 1fr;">
+        <div class="cwth" style="text-align:left;">Month</div>
+        <div class="cwth">Earnings</div>
+        <div class="cwth">EV spend</div>
+        <div class="cwth">Net profit</div>
+        <div class="cwth">Sessions</div>
+      </div>
+      <div id="calMonthlyTableBody"></div>
+      <div class="cal-weekly-footer" id="calMonthlyFooter" style="grid-template-columns:100px 1fr 1fr 1fr 1fr;"></div>
+    </div>
+  </div>
+
+  <div class="action-row" style="margin-top:18px;">
+    <button class="pdf-btn" onclick="printAsPDF()">🖨️ Save as PDF</button>
+  </div>
   <div class="card" style="margin-bottom:18px;">
     <button class="clear-btn" onclick="clearAll()">Clear all EV records</button>
   </div>
@@ -371,31 +354,138 @@
 <script>
 let charges = [];
 let dayStats = {};
-try { charges = JSON.parse(localStorage.getItem("ev_charges")) || []; } catch(e) {}
+let weekStats = {};
+
+try { charges  = JSON.parse(localStorage.getItem("ev_charges"))   || []; } catch(e) {}
 try { dayStats = JSON.parse(localStorage.getItem("ev_day_stats")) || {}; } catch(e) {}
+try { weekStats= JSON.parse(localStorage.getItem("ev_week_stats"))|| {}; } catch(e) {}
 
 const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
+const MONTHS      = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAY_ABBR    = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const MONTH_COLOURS = [
   { solid:'#2563eb', bg:'#eff6ff', text:'#1e3a8a', pill:'rgba(37,99,235,0.10)', pillText:'#1d4ed8' },
   { solid:'#7c3aed', bg:'#f5f3ff', text:'#5b21b6', pill:'rgba(124,58,237,0.10)', pillText:'#6d28d9' },
   { solid:'#0f766e', bg:'#f0fdfa', text:'#115e59', pill:'rgba(15,118,110,0.10)', pillText:'#0f766e' },
-  { solid:'#d97706', bg:'#fffbeb', text:'#92400e', pill:'rgba(217,119,6,0.12)', pillText:'#b45309' },
-  { solid:'#16a34a', bg:'#f0fdf4', text:'#166534', pill:'rgba(22,163,74,0.10)', pillText:'#15803d' },
-  { solid:'#dc2626', bg:'#fef2f2', text:'#991b1b', pill:'rgba(220,38,38,0.10)', pillText:'#b91c1c' },
-  { solid:'#0891b2', bg:'#ecfeff', text:'#155e75', pill:'rgba(8,145,178,0.10)', pillText:'#0e7490' },
+  { solid:'#d97706', bg:'#fffbeb', text:'#92400e', pill:'rgba(217,119,6,0.12)',  pillText:'#b45309' },
+  { solid:'#16a34a', bg:'#f0fdf4', text:'#166534', pill:'rgba(22,163,74,0.10)',  pillText:'#15803d' },
+  { solid:'#dc2626', bg:'#fef2f2', text:'#991b1b', pill:'rgba(220,38,38,0.10)',  pillText:'#b91c1c' },
+  { solid:'#0891b2', bg:'#ecfeff', text:'#155e75', pill:'rgba(8,145,178,0.10)',  pillText:'#0e7490' },
   { solid:'#c026d3', bg:'#fdf4ff', text:'#86198f', pill:'rgba(192,38,211,0.10)', pillText:'#a21caf' },
-  { solid:'#ea580c', bg:'#fff7ed', text:'#9a3412', pill:'rgba(234,88,12,0.12)', pillText:'#c2410c' },
-  { solid:'#4f46e5', bg:'#eef2ff', text:'#3730a3', pill:'rgba(79,70,229,0.10)', pillText:'#4338ca' },
+  { solid:'#ea580c', bg:'#fff7ed', text:'#9a3412', pill:'rgba(234,88,12,0.12)',  pillText:'#c2410c' },
+  { solid:'#4f46e5', bg:'#eef2ff', text:'#3730a3', pill:'rgba(79,70,229,0.10)',  pillText:'#4338ca' },
   { solid:'#65a30d', bg:'#f7fee7', text:'#3f6212', pill:'rgba(101,163,13,0.12)', pillText:'#4d7c0f' },
-  { solid:'#be123c', bg:'#fff1f2', text:'#881337', pill:'rgba(190,18,60,0.10)', pillText:'#be123c' }
+  { solid:'#be123c', bg:'#fff1f2', text:'#881337', pill:'rgba(190,18,60,0.10)',  pillText:'#be123c' }
 ];
 
-// ── modal state ──
-let _modalMode = null; // 'session' | 'day'
-let _modalIdx  = -1;
-let _modalDate = '';
+let _modalMode = null, _modalIdx = -1;
+let weekOffset = 0;
+
+const pad = n => String(n).padStart(2,"0");
+const fmt = n => "£" + Number(n).toFixed(2);
+const todayDate = new Date();
+
+const dateEl = document.getElementById("date");
+dateEl.value = `${todayDate.getFullYear()}-${pad(todayDate.getMonth()+1)}-${pad(todayDate.getDate())}`;
+const todayStr = () => dateEl.value;
+
+function getMondayOf(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = (day === 0) ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function dateToStr(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function isoWeekKey(monday) {
+  const jan4 = new Date(monday.getFullYear(), 0, 4);
+  const startOfWeek1 = getMondayOf(jan4);
+  const weekNum = Math.round((monday - startOfWeek1) / 604800000) + 1;
+  return `${monday.getFullYear()}-W${pad(weekNum)}`;
+}
+function getWeekDates(offset) {
+  const base = getMondayOf(todayDate);
+  base.setDate(base.getDate() + offset * 7);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() + i);
+    days.push(d);
+  }
+  return days;
+}
+
+function renderWeek() {
+  const days = getWeekDates(weekOffset);
+  const wKey = isoWeekKey(days[0]);
+  const todayISO = dateToStr(todayDate);
+  const start = days[0], end = days[6];
+  const sameMonth = start.getMonth() === end.getMonth();
+  const lbl = sameMonth
+    ? `${start.getDate()}–${end.getDate()} ${MONTHS[start.getMonth()]} ${start.getFullYear()}`
+    : `${start.getDate()} ${MONTHS[start.getMonth()]} – ${end.getDate()} ${MONTHS[end.getMonth()]} ${end.getFullYear()}`;
+  document.getElementById('weekRangeLabel').textContent = lbl;
+  const grid = document.getElementById('weekDaysGrid');
+  grid.innerHTML = days.map((d,i) => {
+    const ds   = dateToStr(d);
+    const earn = (dayStats[ds] && dayStats[ds].earnings) || '';
+    const isToday = ds === todayISO;
+    const hasVal  = earn !== '' && earn > 0;
+    return `<div class="week-day-cell">
+      <div class="week-day-label">${DAY_ABBR[i]}</div>
+      <input class="week-day-input${isToday?' today-input':''}${hasVal?' has-value':''}"
+             type="number" step="0.01" min="0" placeholder="—"
+             value="${earn}" data-date="${ds}"
+             oninput="onWeekDayInput(this)">
+      <div class="week-day-date">${pad(d.getDate())}/${pad(d.getMonth()+1)}</div>
+    </div>`;
+  }).join('');
+  const wh = weekStats[wKey] || {};
+  document.getElementById('weekHours').value = wh.hours || '';
+  document.getElementById('weekHours').dataset.wkey = wKey;
+  updateWeekSummary(days, wKey);
+}
+
+function onWeekDayInput(input) {
+  const ds  = input.dataset.date;
+  const val = parseFloat(input.value) || 0;
+  const existing = dayStats[ds] || {};
+  dayStats[ds] = { ...existing, earnings: val };
+  try { localStorage.setItem("ev_day_stats", JSON.stringify(dayStats)); } catch(e) {}
+  input.classList.toggle('has-value', val > 0);
+  const days = getWeekDates(weekOffset);
+  const wKey = isoWeekKey(days[0]);
+  updateWeekSummary(days, wKey);
+  renderDateViewer();
+}
+
+function updateWeekSummary(days, wKey) {
+  let weekEarn = 0, weekEv = 0;
+  days.forEach(d => {
+    const ds = dateToStr(d);
+    weekEarn += (dayStats[ds] && dayStats[ds].earnings) || 0;
+    weekEv   += charges.filter(c => c.date === ds).reduce((s,c) => s + c.cost, 0);
+  });
+  const hours  = parseFloat(document.getElementById('weekHours').value) || 0;
+  const profit = weekEarn - weekEv;
+  document.getElementById('weekTotal').textContent  = fmt(weekEarn);
+  document.getElementById('weekProfit').textContent = fmt(profit);
+  document.getElementById('weekProfit').style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('weekPerHour').textContent = hours > 0 ? fmt(profit / hours) : '—';
+  document.getElementById('weekHoursSub').textContent = weekEv > 0 ? `EV: ${fmt(weekEv)}` : '';
+}
+
+function changeWeek(delta) { weekOffset += delta; renderWeek(); }
+
+document.getElementById('weekHours').addEventListener('input', function() {
+  const wKey = this.dataset.wkey;
+  const hrs  = parseFloat(this.value) || 0;
+  weekStats[wKey] = { hours: hrs };
+  try { localStorage.setItem("ev_week_stats", JSON.stringify(weekStats)); } catch(e) {}
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, wKey);
+});
 
 function showTab(tab, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -405,23 +495,10 @@ function showTab(tab, btn) {
   if (tab === 'calendar') renderCalendar();
 }
 
-const pad = n => String(n).padStart(2,"0");
-const today = new Date();
-const dateEl = document.getElementById("date");
-dateEl.value = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-const fmt = n => "£" + Number(n).toFixed(2);
-const todayStr = () => dateEl.value;
-
-function saveDayStats(date, earnings, hours) {
-  dayStats[date] = { earnings, hours };
-  try { localStorage.setItem("ev_day_stats", JSON.stringify(dayStats)); } catch(e) {}
-}
-
-function loadDayStats(date) {
-  const stats = dayStats[date] || {};
-  document.getElementById("earnings").value = stats.earnings > 0 ? stats.earnings : "";
-  document.getElementById("hours").value = stats.hours > 0 ? stats.hours : "";
-}
+dateEl.addEventListener("change", () => {
+  document.getElementById('chargeDate').value = dateEl.value;
+  renderSessions();
+});
 
 function autoFillMilesAfter() {
   const before = parseFloat(document.getElementById("milesBefore").value);
@@ -449,8 +526,8 @@ function renderSessions() {
   area.innerHTML = list.map((c,i) => {
     const realIdx = findChargeIndex(date, i);
     let parts = [`<span class="s-cost">${fmt(c.cost)}</span>`];
-    if (c.mileage) parts.push(`<span class="s-miles">${c.mileage}mi</span>`);
-    if (c.battBefore != null && c.battAfter != null) parts.push(`<span class="s-batt">${c.battBefore}%→${c.battAfter}%</span>`);
+    if (c.mileage) parts.push(`<span style="color:var(--text-secondary)">${c.mileage}mi</span>`);
+    if (c.battBefore != null && c.battAfter != null) parts.push(`<span style="color:var(--text-secondary)">${c.battBefore}%→${c.battAfter}%</span>`);
     return `<span class="session-tag">${parts.join('<span style="color:var(--text-muted);margin:0 2px;">·</span>')}
       <button class="edit-btn" onclick="openSessionEdit(${realIdx})" title="Edit">✏️</button>
       <button class="remove" onclick="removeCharge(${realIdx})" title="Remove">×</button>
@@ -460,9 +537,11 @@ function renderSessions() {
 
 function removeCharge(idx) {
   if (idx < 0) return;
-  charges.splice(idx,1);
+  charges.splice(idx, 1);
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
-  renderSessions(); calculate();
+  renderSessions(); renderDateViewer();
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, isoWeekKey(days[0]));
 }
 
 function addCharge() {
@@ -473,16 +552,19 @@ function addCharge() {
   const battAfter   = document.getElementById("battAfter").value   !== "" ? parseFloat(document.getElementById("battAfter").value)   : null;
   const milesBefore = document.getElementById("milesBefore").value !== "" ? parseFloat(document.getElementById("milesBefore").value) : null;
   const milesAfter  = document.getElementById("milesAfter").value  !== "" ? parseFloat(document.getElementById("milesAfter").value)  : null;
-  charges.push({ date: todayStr(), cost, mileage, battBefore, battAfter, milesBefore, milesAfter });
+  const chargeDate  = document.getElementById("chargeDate").value || todayStr();
+  charges.push({ date: chargeDate, cost, mileage, battBefore, battAfter, milesBefore, milesAfter });
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
   ["charging","mileage","battBefore","battAfter","milesBefore","milesAfter"].forEach(id => document.getElementById(id).value = "");
-  renderSessions(); calculate();
+  document.getElementById("chargeDate").value = dateToStr(todayDate);
+  renderSessions(); renderDateViewer();
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, isoWeekKey(days[0]));
 }
 
-// ── Modal helpers ──
 function closeModal() {
   document.getElementById('editModal').classList.remove('open');
-  _modalMode = null; _modalIdx = -1; _modalDate = '';
+  _modalMode = null; _modalIdx = -1;
 }
 
 function openSessionEdit(idx) {
@@ -502,17 +584,15 @@ function openSessionEdit(idx) {
     <div class="modal-section">Mileage</div>
     <div class="row2">
       <div class="field"><label>Odometer before</label><input id="m_mb" type="number" step="1" min="0" value="${c.milesBefore!=null?c.milesBefore:''}"></div>
-      <div class="field"><label>Odometer after <span style="color:var(--text-muted);font-size:10px;">auto</span></label><input id="m_ma" type="number" step="1" min="0" value="${c.milesAfter!=null?c.milesAfter:''}"></div>
+      <div class="field"><label>Odometer after</label><input id="m_ma" type="number" step="1" min="0" value="${c.milesAfter!=null?c.milesAfter:''}"></div>
     </div>
     <div class="modal-section">Date</div>
     <div class="field"><label>Date</label><input id="m_date" type="date" value="${c.date||''}"></div>
   `;
-  // Auto-calc: odometer after = odometer before + miles added
   function modalAutoMiles() {
     const mb = parseFloat(document.getElementById('m_mb').value);
     const ml = parseFloat(document.getElementById('m_miles').value);
-    if (!isNaN(mb) && !isNaN(ml) && ml > 0)
-      document.getElementById('m_ma').value = Math.round(mb + ml);
+    if (!isNaN(mb) && !isNaN(ml) && ml > 0) document.getElementById('m_ma').value = Math.round(mb + ml);
   }
   document.getElementById('m_mb').addEventListener('input', modalAutoMiles);
   document.getElementById('m_miles').addEventListener('input', modalAutoMiles);
@@ -531,179 +611,103 @@ function saveSessionEdit() {
   c.milesAfter = document.getElementById('m_ma').value !== '' ? parseFloat(document.getElementById('m_ma').value) : null;
   c.date       = document.getElementById('m_date').value || c.date;
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
-  closeModal(); renderSessions(); calculate();
+  closeModal(); renderSessions(); renderDateViewer();
+  const days = getWeekDates(weekOffset);
+  updateWeekSummary(days, isoWeekKey(days[0]));
   if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
 }
 
-function openDayEdit(dateKey) {
+function renderDateViewer() {
+  const dateKey = document.getElementById('viewerDate').value;
+  const body = document.getElementById('dateViewerBody');
+  if (!dateKey) {
+    body.innerHTML = '<div class="dvp-empty"><div class="dvp-empty-icon">📅</div>Pick a date above to see what\'s recorded for that day.</div>';
+    return;
+  }
+  const daySessions = charges.filter(c => c.date === dateKey);
   const ds = dayStats[dateKey] || {};
-  _modalMode = 'day'; _modalDate = dateKey;
-  document.getElementById('modalTitle').textContent = `Edit Day — ${dateKey}`;
-  document.getElementById('modalBody').innerHTML = `
-    <div class="modal-section">Day stats</div>
-    <div class="field"><label>Earnings (£)</label><input id="m_earn" type="number" step="0.01" min="0" value="${ds.earnings||''}"></div>
-    <div class="field"><label>Hours worked</label><input id="m_hrs" type="number" step="0.1" min="0" value="${ds.hours||''}"></div>
-    <div class="modal-section">Charging sessions for this day</div>
-    <div id="m_sessions_list" style="font-size:12px;color:var(--text-secondary);">
-      ${charges.filter(c=>c.date===dateKey).map((c,i)=>`
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
-          <span>${fmt(c.cost)} · ${c.mileage||0}mi · ${c.battBefore!=null?c.battBefore+'%→'+c.battAfter+'%':'no batt'}</span>
-          <button onclick="openSessionEdit(${findChargeIndexByDate(dateKey,i)});document.getElementById('editModal').classList.add('open');" style="background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;cursor:pointer;font-size:11px;color:var(--blue);">Edit</button>
-        </div>`).join('') || '<span style="color:var(--text-muted)">No charging sessions on this day.</span>'}
+  const earnings = ds.earnings || 0;
+  const totalEv = daySessions.reduce((s,c) => s + (c.cost||0), 0);
+  const profit = earnings - totalEv;
+  const hasAnyData = earnings > 0 || daySessions.length > 0;
+
+  if (!hasAnyData) {
+    body.innerHTML = `<div class="dvp-empty"><div class="dvp-empty-icon">🔍</div>No data recorded for <strong>${formatDateDisplay(dateKey)}</strong>.</div>`;
+    return;
+  }
+
+  const profitStatCls = profit > 0 ? 'green' : profit < 0 ? 'red' : '';
+
+  let chargesHtml = '';
+  if (daySessions.length > 0) {
+    chargesHtml = `<div class="dvp-section-label">Charging sessions (${daySessions.length})</div>`;
+    daySessions.forEach((c, i) => {
+      const realIdx = findChargeIndex(dateKey, i);
+      let meta = [];
+      if (c.mileage) meta.push(`${c.mileage} mi`);
+      if (c.milesBefore != null) meta.push(`Odometer: ${c.milesBefore.toLocaleString()}`);
+      let battStr = '';
+      if (c.battBefore != null && c.battAfter != null)
+        battStr = `<span style="color:#f97316;font-weight:600;">${c.battBefore}%</span> → <span style="color:#2563eb;font-weight:600;">${c.battAfter}%</span>`;
+      chargesHtml += `<div class="dvp-charge-item">
+        <div class="dvp-charge-left">
+          <span class="dvp-charge-cost">${fmt(c.cost)}</span>
+          ${meta.length ? `<span class="dvp-charge-meta">${meta.join(' · ')}</span>` : ''}
+          ${battStr ? `<span class="dvp-charge-batt">${battStr}</span>` : ''}
+        </div>
+        <div class="dvp-charge-actions">
+          <button class="dvp-edit-btn" onclick="openSessionEdit(${realIdx})">Edit</button>
+          <button class="dvp-del-btn" onclick="removeCharge(${realIdx})">Delete</button>
+        </div>
+      </div>`;
+    });
+  } else {
+    chargesHtml = `<div class="dvp-section-label">Charging sessions</div><div style="font-size:12px;color:var(--text-muted);padding:6px 0;">No charging sessions for this date.</div>`;
+  }
+
+  body.innerHTML = `
+    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;font-family:'DM Mono',monospace;">${formatDateDisplay(dateKey)}</div>
+    <div class="dvp-summary-grid">
+      <div class="dvp-stat green"><div class="dvp-stat-label">Earnings</div><div class="dvp-stat-val">${fmt(earnings)}</div></div>
+      <div class="dvp-stat blue"><div class="dvp-stat-label">EV cost</div><div class="dvp-stat-val">${fmt(totalEv)}</div></div>
+      <div class="dvp-stat ${profitStatCls}"><div class="dvp-stat-label">Net profit</div><div class="dvp-stat-val">${fmt(profit)}</div></div>
     </div>
+    ${chargesHtml}
   `;
-  document.getElementById('modalSaveBtn').onclick = saveDayEdit;
-  document.getElementById('editModal').classList.add('open');
 }
 
-function findChargeIndexByDate(date, nth) {
-  let count = -1;
-  for (let i = 0; i < charges.length; i++) {
-    if (charges[i].date === date) count++;
-    if (count === nth) return i;
-  }
-  return -1;
-}
-
-function saveDayEdit() {
-  const earn = parseFloat(document.getElementById('m_earn').value) || 0;
-  const hrs  = parseFloat(document.getElementById('m_hrs').value) || 0;
-  dayStats[_modalDate] = { earnings: earn, hours: hrs };
-  try { localStorage.setItem("ev_day_stats", JSON.stringify(dayStats)); } catch(e) {}
-  closeModal(); calculate(); renderCalendar();
-}
-
-// ── Battery tones ──
-function setTone(elId, tone) {
-  const box = document.getElementById(elId)?.closest('.batt-box');
-  if (!box) return;
-  box.classList.remove('tone-red','tone-orange','tone-muted','tone-good','tone-blue');
-  if (tone) box.classList.add(tone);
-}
-function batteryBeforeTone(value) {
-  if (value == null || isNaN(value)) return 'tone-muted';
-  if (value < 10) return 'tone-red';
-  if (value < 30) return 'tone-orange';
-  return 'tone-muted';
-}
-function batteryAfterTone(value) {
-  if (value == null || isNaN(value)) return 'tone-blue';
-  return value >= 80 ? 'tone-good' : 'tone-blue';
-}
-
-function calculate() {
-  const date     = todayStr();
-  const earnings = parseFloat(document.getElementById("earnings").value) || 0;
-  const hours    = parseFloat(document.getElementById("hours").value)    || 0;
-  const dayC     = charges.filter(c => c.date === date);
-  const dayEv    = dayC.reduce((s,c) => s + c.cost, 0);
-  const dayMiles = dayC.reduce((s,c) => s + c.mileage, 0);
-  const profit   = earnings - dayEv;
-
-  saveDayStats(date, earnings, hours);
-
-  const hasData = earnings > 0 || dayEv > 0;
-  const isProfit = profit > 0;
-  const isLoss   = profit < 0;
-
-  const profitEl  = document.getElementById("profit");
-  const badgeEl   = document.getElementById("profitBadge");
-  const subEl     = document.getElementById("profitSub");
-  const cardEl    = document.getElementById("resultCard");
-  const showP     = document.getElementById("showProfit");
-
-  profitEl.textContent = fmt(profit);
-  showP.textContent    = fmt(profit);
-
-  if (!hasData) {
-    profitEl.className = "profit-amount p-zero";
-    badgeEl.textContent = "Awaiting input"; badgeEl.className = "profit-badge zero";
-    subEl.textContent = "after EV charging";
-    cardEl.className = "card result-card state-zero";
-    showP.className = "stat-val sv-muted";
-    document.getElementById("mPerHour").className = "metric m-neutral";
-  } else if (isProfit) {
-    profitEl.className = "profit-amount p-pos";
-    badgeEl.textContent = "Profit"; badgeEl.className = "profit-badge profit";
-    subEl.textContent = "Great session — you're in the green!";
-    cardEl.className = "card result-card state-profit";
-    showP.className = "stat-val sv-green";
-    document.getElementById("mPerHour").className = "metric m-profit";
-  } else if (isLoss) {
-    profitEl.className = "profit-amount p-neg";
-    badgeEl.textContent = "Loss"; badgeEl.className = "profit-badge loss";
-    subEl.textContent = "Charging cost more than you earned today";
-    cardEl.className = "card result-card state-loss";
-    showP.className = "stat-val sv-red";
-    document.getElementById("mPerHour").className = "metric m-loss";
-  } else {
-    profitEl.className = "profit-amount p-zero";
-    badgeEl.textContent = "Break even"; badgeEl.className = "profit-badge zero";
-    subEl.textContent = "Earnings matched your charging costs exactly";
-    cardEl.className = "card result-card state-zero";
-    showP.className = "stat-val sv-muted";
-    document.getElementById("mPerHour").className = "metric m-neutral";
-  }
-
-  document.getElementById("todayEv").textContent      = fmt(dayEv);
-  document.getElementById("todayCount").textContent   = dayC.length;
-  document.getElementById("showEarnings").textContent = fmt(earnings);
-  document.getElementById("showEv").textContent       = fmt(dayEv);
-  document.getElementById("perHour").textContent      = hours > 0 ? fmt(profit/hours) : "—";
-  document.getElementById("percent").textContent      = earnings > 0 ? (dayEv/earnings*100).toFixed(1)+"%" : "—";
-  document.getElementById("mile").textContent         = dayMiles > 0 ? fmt(dayEv/dayMiles) : "—";
-
-  const withBatt  = dayC.filter(c => c.battBefore  != null || c.battAfter  != null);
-  const withMiles = dayC.filter(c => c.milesBefore != null || c.milesAfter != null);
-  document.getElementById("battBlock").style.display = (withBatt.length || withMiles.length) ? "block" : "none";
-
-  if (withBatt.length) {
-    const bb = withBatt[0].battBefore, ba = withBatt[withBatt.length-1].battAfter;
-    document.getElementById("dispBattBefore").textContent = bb != null ? bb+"%" : "—";
-    document.getElementById("dispBattAfter").textContent  = ba != null ? ba+"%" : "—";
-    document.getElementById("barBefore").style.width = bb != null ? Math.min(bb,100)+"%" : "0%";
-    document.getElementById("barAfter").style.width  = ba != null ? Math.min(ba,100)+"%" : "0%";
-    setTone("dispBattBefore", batteryBeforeTone(bb));
-    setTone("dispBattAfter", batteryAfterTone(ba));
-  } else {
-    ["dispBattBefore","dispBattAfter"].forEach(id => document.getElementById(id).textContent = "—");
-    ["barBefore","barAfter"].forEach(id => document.getElementById(id).style.width = "0%");
-    setTone("dispBattBefore", "tone-muted");
-    setTone("dispBattAfter", "tone-blue");
-  }
-
-  if (withMiles.length) {
-    const mb = withMiles[0].milesBefore, ma = withMiles[withMiles.length-1].milesAfter;
-    document.getElementById("dispMilesBefore").textContent = mb != null ? mb.toLocaleString() : "—";
-    document.getElementById("dispMilesAfter").textContent  = ma != null ? ma.toLocaleString() : "—";
-    document.getElementById("dispMilesDiff").textContent   = (mb != null && ma != null) ? "+"+(ma-mb).toFixed(0)+" mi added" : "";
-    setTone("dispMilesBefore", (mb != null && ma != null && ma > mb) ? "tone-orange" : "tone-muted");
-    setTone("dispMilesAfter", "tone-blue");
-  } else {
-    ["dispMilesBefore","dispMilesAfter"].forEach(id => document.getElementById(id).textContent = "—");
-    document.getElementById("dispMilesDiff").textContent = "";
-    setTone("dispMilesBefore", "tone-muted");
-    setTone("dispMilesAfter", "tone-blue");
-  }
-
-  renderSessions();
+function formatDateDisplay(dateKey) {
+  if (!dateKey) return '';
+  const [y,m,d] = dateKey.split('-').map(Number);
+  return `${d} ${MONTHS_FULL[m-1]} ${y}`;
 }
 
 function clearAll() {
   if (confirm("Delete all EV charging records and earnings records?")) {
-    charges = [];
-    dayStats = {};
-    try { localStorage.removeItem("ev_charges"); localStorage.removeItem("ev_day_stats"); } catch(e) {}
-    calculate();
+    charges = []; dayStats = {}; weekStats = {};
+    try {
+      localStorage.removeItem("ev_charges");
+      localStorage.removeItem("ev_day_stats");
+      localStorage.removeItem("ev_week_stats");
+    } catch(e) {}
+    renderWeek(); renderSessions(); renderDateViewer();
   }
 }
 
-["earnings","hours"].forEach(id => document.getElementById(id).addEventListener("input", calculate));
-dateEl.addEventListener("change", () => { loadDayStats(todayStr()); renderSessions(); calculate(); });
-loadDayStats(todayStr());
-renderSessions(); calculate();
-
 let currentYear = new Date().getFullYear();
+
+function getWeekKeyForDate(dateStr) {
+  const dt = new Date(dateStr + 'T00:00:00');
+  const day = dt.getDay();
+  const diff = (day === 0) ? -6 : 1 - day;
+  const mon = new Date(dt); mon.setDate(dt.getDate() + diff);
+  const jan4 = new Date(mon.getFullYear(), 0, 4);
+  const startW1mon = new Date(jan4);
+  const jan4day = jan4.getDay(); const diffJ = (jan4day===0)?-6:1-jan4day;
+  startW1mon.setDate(jan4.getDate() + diffJ);
+  const weekNum = Math.round((mon - startW1mon) / 604800000) + 1;
+  return mon.getFullYear() + '-W' + String(weekNum).padStart(2,'0');
+}
 
 function buildYearData(year) {
   const byMonth = {}, byDay = {};
@@ -719,98 +723,207 @@ function buildYearData(year) {
     byDay[c.date].miles += c.mileage || 0;
     if (c.battBefore != null) byDay[c.date].batt.push({ before:c.battBefore, after:c.battAfter });
     if (c.milesBefore != null && byDay[c.date].milesBefore === null) byDay[c.date].milesBefore = c.milesBefore;
-    if (c.milesAfter != null) byDay[c.date].milesAfter = c.milesAfter;
+    if (c.milesAfter  != null) byDay[c.date].milesAfter = c.milesAfter;
+  });
+  Object.keys(dayStats).forEach(date => {
+    const [y] = date.split('-').map(Number);
+    if (y !== year) return;
+    if (!byDay[date]) byDay[date] = { total:0, sessions:0, miles:0, batt:[], milesBefore:null, milesAfter:null };
   });
   Object.keys(byDay).forEach(date => {
     const [,m] = date.split('-').map(Number);
     const earnings = (dayStats[date] && dayStats[date].earnings) || 0;
-    const hours = (dayStats[date] && dayStats[date].hours) || 0;
-    byDay[date].earnings = earnings;
-    byDay[date].hours = hours;
+    const hours    = (dayStats[date] && dayStats[date].hours)    || 0;
+    byDay[date].earnings = earnings; byDay[date].hours = hours;
     byDay[date].profit = earnings - byDay[date].total;
+    if (!byMonth[m-1]) byMonth[m-1] = { total:0, sessions:0, earnings:0, profit:0 };
     byMonth[m-1].earnings += earnings;
-    byMonth[m-1].profit += byDay[date].profit;
+    byMonth[m-1].profit   += byDay[date].profit;
   });
   return { byMonth, byDay };
 }
 
 function getDaysInMonth(year, month) { return new Date(year, month+1, 0).getDate(); }
 
+function renderWeeklyTable(year, byDay) {
+  document.getElementById('calWeeklyYear').textContent = year;
+  const weekMap = {};
+  Object.keys(byDay).forEach(date => {
+    const [y] = date.split('-').map(Number);
+    if (y !== year) return;
+    const wk = getWeekKeyForDate(date);
+    if (!weekMap[wk]) weekMap[wk] = { earn:0, ev:0, hours:0 };
+    weekMap[wk].earn  += (byDay[date].earnings || 0);
+    weekMap[wk].ev    += (byDay[date].total    || 0);
+    weekMap[wk].hours += (byDay[date].hours    || 0);
+  });
+  Object.keys(weekStats).forEach(wk => {
+    if (!wk.startsWith(year+'-W')) return;
+    if (!weekMap[wk]) weekMap[wk] = { earn:0, ev:0, hours:0 };
+    weekMap[wk].hours = weekStats[wk].hours || weekMap[wk].hours;
+  });
+  const sortedWeeks = Object.keys(weekMap).sort();
+  if (sortedWeeks.length === 0) {
+    document.getElementById('calWeeklyTableBody').innerHTML = `<div style="padding:16px 18px;font-size:12px;color:var(--text-muted);text-align:center;">No data for ${year} yet.</div>`;
+    document.getElementById('calWeeklyFooter').innerHTML = '';
+    return;
+  }
+  let totalEarn = 0, totalEv = 0, totalHours = 0;
+  const rows = sortedWeeks.map(wk => {
+    const d = weekMap[wk];
+    const profit = d.earn - d.ev;
+    totalEarn += d.earn; totalEv += d.ev; totalHours += d.hours;
+    const wNum = wk.split('-W')[1];
+    const profCls = profit >= 0 ? 'profit-pos' : 'profit-neg';
+    return `<div class="cal-weekly-table-row">
+      <div class="cwtd">Wk ${wNum}</div>
+      <div class="cwtd earn-val">${fmt(d.earn)}</div>
+      <div class="cwtd ev-val">${fmt(d.ev)}</div>
+      <div class="cwtd ${profCls}">${fmt(profit)}</div>
+      <div class="cwtd hours-val">${d.hours > 0 ? d.hours.toFixed(1)+'h' : '—'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('calWeeklyTableBody').innerHTML = rows;
+
+  // Only show the Total footer row when there are 2 or more weeks
+  if (sortedWeeks.length > 1) {
+    const totalProfit = totalEarn - totalEv;
+    const profCls = totalProfit >= 0 ? 'profit-pos' : 'profit-neg';
+    document.getElementById('calWeeklyFooter').innerHTML = `
+      <div class="cwtf">Total</div>
+      <div class="cwtf earn-val">${fmt(totalEarn)}</div>
+      <div class="cwtf ev-val">${fmt(totalEv)}</div>
+      <div class="cwtf ${profCls}">${fmt(totalProfit)}</div>
+      <div class="cwtf">${totalHours > 0 ? totalHours.toFixed(1)+'h' : '—'}</div>
+    `;
+  } else {
+    document.getElementById('calWeeklyFooter').innerHTML = '';
+  }
+}
+
 function renderCalendar() {
   const { byMonth, byDay } = buildYearData(currentYear);
   document.getElementById('yearLabel').textContent = currentYear;
+  renderWeeklyTable(currentYear, byDay);
+
   const allTime   = charges.reduce((s,c) => s+(c.cost||0), 0);
   const allSess   = charges.length;
   const yearTotal = Object.values(byMonth).reduce((s,m) => s+m.total, 0);
   const yearEarn  = Object.values(byMonth).reduce((s,m) => s+(m.earnings||0), 0);
   const yearSess  = Object.values(byMonth).reduce((s,m) => s+m.sessions, 0);
-
-  // Peak month — find the month with highest spending
   const peakEntry = Object.entries(byMonth).reduce((a,[k,v]) => v.total > (a[1]?.total||0) ? [k,v] : a, [null,{total:0}]);
-  const peakMonthName = peakEntry[0] != null && peakEntry[1].total > 0 ? MONTHS_FULL[parseInt(peakEntry[0])] : '—';
-  const peakMonthSpend = peakEntry[1].total > 0 ? '£'+peakEntry[1].total.toFixed(2)+' spent' : '';
+  const yearProfit = yearEarn - yearTotal;
+
+  // Build peak month label — if data spans a week crossing two months show "Apr 27 – May 3" style
+  let peakLabel = '—', peakSub = '';
+  if (peakEntry[0] != null && peakEntry[1].total > 0) {
+    const pmi = parseInt(peakEntry[0]);
+    // Check if any charge dates in this month fall in a week that also covers the next month
+    const daysInPeak = getDaysInMonth(currentYear, pmi);
+    const lastDay = `${currentYear}-${pad(pmi+1)}-${pad(daysInPeak)}`;
+    const lastDayObj = new Date(lastDay + 'T00:00:00');
+    const nextMonthHasCharges = charges.some(c => {
+      if (!c.date) return false;
+      const [cy, cm] = c.date.split('-').map(Number);
+      return cy === currentYear && cm === pmi + 2; // next month (1-indexed)
+    });
+    const prevMonthHasCharges = charges.some(c => {
+      if (!c.date) return false;
+      const [cy, cm] = c.date.split('-').map(Number);
+      return cy === currentYear && cm === pmi; // prev month (1-indexed)
+    });
+    // Find the actual date range of charges in this peak month
+    const peakCharges = charges.filter(c => {
+      if (!c.date) return false;
+      const [cy, cm] = c.date.split('-').map(Number);
+      return cy === currentYear && cm === pmi + 1;
+    });
+    const peakEarnDates = Object.keys(dayStats).filter(d => {
+      const [cy, cm] = d.split('-').map(Number);
+      return cy === currentYear && cm === pmi + 1 && dayStats[d].earnings > 0;
+    });
+    const allPeakDates = [...new Set([...peakCharges.map(c=>c.date), ...peakEarnDates])].sort();
+    if (allPeakDates.length > 0) {
+      const firstDate = allPeakDates[0];
+      const lastDate  = allPeakDates[allPeakDates.length - 1];
+      const [,fm,fd] = firstDate.split('-').map(Number);
+      const [,lm,ld] = lastDate.split('-').map(Number);
+      if (fm !== lm) {
+        peakLabel = `${MONTHS[fm-1]} ${fd} – ${MONTHS[lm-1]} ${ld}`;
+      } else {
+        peakLabel = MONTHS_FULL[pmi];
+      }
+    } else {
+      peakLabel = MONTHS_FULL[pmi];
+    }
+    peakSub = `£${peakEntry[1].total.toFixed(2)} spent`;
+  }
 
   document.getElementById('calMetrics').innerHTML = `
-    <div class="cal-metric" style="background:#eff6ff;border-color:rgba(37,99,235,0.16);border-left:4px solid #2563eb;"><div class="lbl" style="color:#1e3a8a;">All-time EV spend</div><div class="val" style="color:#1d4ed8">£${allTime.toFixed(2)}</div><div class="sub" style="color:#64748b;">${allSess} sessions total</div></div>
-    <div class="cal-metric" style="background:#f0fdf4;border-color:rgba(22,163,74,0.16);border-left:4px solid #16a34a;"><div class="lbl" style="color:#166534;">${currentYear} earnings</div><div class="val" style="color:#15803d">£${yearEarn.toFixed(2)}</div><div class="sub" style="color:#2563eb;font-weight:600;">profit £${(yearEarn-yearTotal).toFixed(2)}</div></div>
-    <div class="cal-metric" style="background:#fff7ed;border-color:rgba(249,115,22,0.25);border-left:4px solid #f97316;"><div class="lbl" style="color:#9a3412;">${currentYear} EV spend</div><div class="val" style="color:#f97316">£${yearTotal.toFixed(2)}</div><div class="sub" style="color:#64748b;">${yearSess} sessions</div></div>
-    <div class="cal-metric" style="background:#f5f3ff;border-color:rgba(124,58,237,0.16);border-left:4px solid #7c3aed;"><div class="lbl" style="color:#5b21b6;">Peak month</div><div class="val" style="color:#6d28d9">${peakMonthName}</div><div class="sub" style="color:#f97316;font-weight:600;">${peakMonthSpend}</div></div>
+    <div class="cal-metric" style="background:#fff7ed;border-color:rgba(234,88,12,0.20);border-left:4px solid #ea580c;"><div class="lbl" style="color:#9a3412;">All-time EV spend</div><div class="val" style="color:#ea580c">£${allTime.toFixed(2)}</div><div class="sub" style="color:#c2410c;">${allSess} sessions total</div></div>
+    <div class="cal-metric" style="background:#f0fdf4;border-color:rgba(22,163,74,0.16);border-left:4px solid #16a34a;"><div class="lbl" style="color:#166534;">${currentYear} earnings</div><div class="val" style="color:#15803d">£${yearEarn.toFixed(2)}</div></div>
+    <div class="cal-metric" style="background:#eff6ff;border-color:rgba(37,99,235,0.20);border-left:4px solid #2563eb;"><div class="lbl" style="color:#1e3a8a;">${currentYear} profits</div><div class="val" style="color:#1d4ed8">£${yearProfit.toFixed(2)}</div></div>
+    <div class="cal-metric" style="background:#f5f3ff;border-color:rgba(124,58,237,0.16);border-left:4px solid #7c3aed;"><div class="lbl" style="color:#5b21b6;">Peak month</div><div class="val" style="color:#6d28d9;font-size:15px;">${peakLabel}</div><div class="sub" style="color:var(--orange);font-weight:600;">${peakSub}</div></div>
   `;
 
-  const maxMonthVal = Math.max(...Object.values(byMonth).map(m => m.total), 0.01);
-  const maxDayVal   = Math.max(...Object.values(byDay).map(d => d.total), 0.01);
-
+  const maxMonthVal = Math.max(...Object.values(byMonth).map(m=>m.total), 0.01);
+  const maxDayVal   = Math.max(...Object.values(byDay).map(d=>d.total), 0.01);
   let html = '';
   for (let mi = 0; mi < 12; mi++) {
     const mData = byMonth[mi];
     if (!mData || mData.sessions === 0) continue;
     const col  = MONTH_COLOURS[mi];
     const mPct = (mData.total / maxMonthVal * 100).toFixed(1);
-    const daysInMonth = getDaysInMonth(currentYear, mi);
     let daysHtml = '';
-
-    for (let d = 1; d <= daysInMonth; d++) {
+    const daysInMo = getDaysInMonth(currentYear, mi);
+    const weekRowsData = {};
+    for (let d = 1; d <= daysInMo; d++) {
+      const dk = `${currentYear}-${pad(mi+1)}-${pad(d)}`;
+      const wk = getWeekKeyForDate(dk);
+      if (!weekRowsData[wk]) weekRowsData[wk] = { earn:0, ev:0, wNum: wk.split('-W')[1] };
+      const dd = byDay[dk];
+      if (dd) { weekRowsData[wk].earn += dd.earnings||0; weekRowsData[wk].ev += dd.total||0; }
+    }
+    let renderedWeeks = new Set();
+    for (let d = 1; d <= daysInMo; d++) {
       const dateKey = `${currentYear}-${pad(mi+1)}-${pad(d)}`;
+      const wk = getWeekKeyForDate(dateKey);
+      if (!renderedWeeks.has(wk) && weekRowsData[wk] && (weekRowsData[wk].earn > 0 || weekRowsData[wk].ev > 0)) {
+        renderedWeeks.add(wk);
+        const wr = weekRowsData[wk];
+        const profit = wr.earn - wr.ev;
+        const profCls = profit >= 0 ? 'profit-pos' : 'profit-neg';
+        daysHtml += `<div class="cal-week-row">
+          <span class="cal-week-label">Wk ${wr.wNum}</span>
+          <span class="cal-week-pill earn">↑ ${fmt(wr.earn)}</span>
+          <div class="cal-week-divider"></div>
+          <span class="cal-week-pill ev">⚡ ${fmt(wr.ev)}</span>
+          <div class="cal-week-divider"></div>
+          <span class="cal-week-pill ${profCls}">= ${fmt(profit)}</span>
+        </div>`;
+      }
       const dData = byDay[dateKey];
+      // Only show days that have EV charging sessions
       if (!dData || dData.sessions === 0) continue;
       const dPct = (dData.total / maxDayVal * 100).toFixed(1);
-      const cpm  = dData.miles > 0 ? fmt(dData.total / dData.miles) : '—';
-      const battInfo = dData.batt.length > 0 ? `${dData.batt[0].before}% → ${dData.batt[dData.batt.length-1].after}%` : '—';
       const profitTone = dData.profit >= 0 ? 'positive' : 'loss';
-
+      const hasEarnings = (dData.earnings || 0) > 0;
       daysHtml += `<div class="day-row" onclick="toggleDayDetails(this)">
         <span class="day-date" style="color:#334155">${pad(d)} ${MONTHS[mi]}</span>
         <span class="day-sessions-badge" style="background:#f1f5f9;color:#475569">${dData.sessions}×</span>
         <div class="day-bar-wrap"><div class="day-bar-fill" style="width:${dPct}%;background:${col.solid};opacity:0.45"></div></div>
         <span class="day-amount" style="color:#111827">£${dData.total.toFixed(2)}</span>
-        <span class="day-earn">Earn £${dData.earnings.toFixed(2)}</span>
-        <button class="day-edit-btn" onclick="event.stopPropagation();openDayEdit('${dateKey}')">✏️ Edit</button>
+        ${hasEarnings ? `<span class="day-earn">Earn £${(dData.earnings).toFixed(2)}</span>` : ''}
       </div>
       <div class="day-details">
-        <div class="day-detail-row"><span class="day-detail-label">Earnings</span><span class="day-detail-val positive">£${dData.earnings.toFixed(2)}</span></div>
+        ${hasEarnings ? `<div class="day-detail-row"><span class="day-detail-label">Earnings</span><span class="day-detail-val positive">£${(dData.earnings).toFixed(2)}</span></div>` : ''}
         <div class="day-detail-row"><span class="day-detail-label">EV charging cost</span><span class="day-detail-val loss">£${dData.total.toFixed(2)}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Net profit</span><span class="day-detail-val info" style="font-size:13px;font-weight:700;">£${dData.profit.toFixed(2)}</span></div>
+        ${hasEarnings ? `<div class="day-detail-row"><span class="day-detail-label">Net profit</span><span class="day-detail-val ${profitTone}" style="font-size:13px;font-weight:700;">£${dData.profit.toFixed(2)}</span></div>` : ''}
         <div class="day-detail-row"><span class="day-detail-label">Sessions</span><span class="day-detail-val neutral">${dData.sessions}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Mileage before</span><span class="day-detail-val warning">${dData.milesBefore != null ? dData.milesBefore.toLocaleString()+' mi' : '—'}</span></div>
-        <div class="day-detail-row"><span class="day-detail-label">Miles added</span><span class="day-detail-val info">${dData.miles ? dData.miles+' mi' : '—'}</span></div>
-        <div class="day-detail-row">
-          <span class="day-detail-label">Mileage total</span>
-          <span style="font-family:'DM Mono',monospace;font-weight:700;color:#0f766e;">
-            ${(dData.milesBefore != null && dData.miles) ? (dData.milesBefore + dData.miles).toLocaleString()+' mi' : (dData.milesAfter != null ? dData.milesAfter.toLocaleString()+' mi' : '—')}
-          </span>
-        </div>
-        <div class="day-detail-row"><span class="day-detail-label">Cost per mile</span><span class="day-detail-val purple">${cpm}</span></div>
-        <div class="day-detail-row">
-          <span class="day-detail-label">Battery</span>
-          <span class="day-detail-val" style="font-family:'DM Mono',monospace;font-weight:600;">
-            ${dData.batt.length > 0
-              ? `<span style="color:#f97316;font-weight:700;">${dData.batt[0].before}%</span><span style="color:#94a3b8;margin:0 4px;">→</span><span style="color:#2563eb;font-weight:700;">${dData.batt[dData.batt.length-1].after}%</span>`
-              : '<span style="color:#94a3b8;">—</span>'}
-          </span>
-        </div>
+        ${dData.miles ? `<div class="day-detail-row"><span class="day-detail-label">Miles added</span><span class="day-detail-val info">${dData.miles} mi</span></div>` : ''}
+        ${dData.batt.length > 0 ? `<div class="day-detail-row"><span class="day-detail-label">Battery</span><span class="day-detail-val"><span style="color:#f97316;font-weight:700;">${dData.batt[0].before}%</span><span style="color:#94a3b8;margin:0 4px;">→</span><span style="color:#2563eb;font-weight:700;">${dData.batt[dData.batt.length-1].after}%</span></span></div>` : ''}
       </div>`;
     }
-
     html += `<div class="month-accordion" style="border-left:4px solid ${col.solid};">
       <div class="month-header" onclick="toggleMonth(this)">
         <div class="month-header-left">
@@ -827,8 +940,53 @@ function renderCalendar() {
       <div class="month-days">${daysHtml}</div>
     </div>`;
   }
+  document.getElementById('calBody').innerHTML = html || `<div class="no-data">No charging records for ${currentYear} yet.</div>`;
+  renderMonthlyTable(currentYear, byMonth);
+}
 
-  document.getElementById('calBody').innerHTML = html || `<div class="no-data">No charging records for ${currentYear} yet — add sessions in the Daily Tracker.</div>`;
+function renderMonthlyTable(year, byMonth) {
+  document.getElementById('calMonthlyYear').textContent = year;
+  const months = Object.keys(byMonth).map(Number).sort((a,b)=>a-b);
+  if (months.length === 0) {
+    document.getElementById('calMonthlyTableBody').innerHTML = `<div style="padding:16px 18px;font-size:12px;color:var(--text-muted);text-align:center;">No data for ${year} yet.</div>`;
+    document.getElementById('calMonthlyFooter').innerHTML = '';
+    return;
+  }
+  let totEarn = 0, totEv = 0, totSess = 0;
+  const rows = months.map(mi => {
+    const d = byMonth[mi];
+    const earn = d.earnings || 0;
+    const ev   = d.total    || 0;
+    const sess = d.sessions || 0;
+    const profit = earn - ev;
+    totEarn += earn; totEv += ev; totSess += sess;
+    const profCls = profit >= 0 ? 'profit-pos' : 'profit-neg';
+    const col = MONTH_COLOURS[mi];
+    return `<div class="cal-weekly-table-row" style="grid-template-columns:100px 1fr 1fr 1fr 1fr;">
+      <div class="cwtd" style="justify-content:flex-start;gap:6px;">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col.solid};flex-shrink:0;"></span>
+        <span style="color:#1e293b;font-weight:700;font-size:11px;">${MONTHS_FULL[mi]}</span>
+      </div>
+      <div class="cwtd earn-val">${fmt(earn)}</div>
+      <div class="cwtd ev-val">${fmt(ev)}</div>
+      <div class="cwtd ${profCls}">${fmt(profit)}</div>
+      <div class="cwtd hours-val">${sess > 0 ? sess : '—'}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('calMonthlyTableBody').innerHTML = rows;
+  if (months.length > 1) {
+    const totProfit = totEarn - totEv;
+    const profCls = totProfit >= 0 ? 'profit-pos' : 'profit-neg';
+    document.getElementById('calMonthlyFooter').innerHTML = `
+      <div class="cwtf" style="text-align:left;">Total</div>
+      <div class="cwtf earn-val">${fmt(totEarn)}</div>
+      <div class="cwtf ev-val">${fmt(totEv)}</div>
+      <div class="cwtf ${profCls}">${fmt(totProfit)}</div>
+      <div class="cwtf">${totSess}</div>
+    `;
+  } else {
+    document.getElementById('calMonthlyFooter').innerHTML = '';
+  }
 }
 
 function toggleMonth(header) {
@@ -836,36 +994,25 @@ function toggleMonth(header) {
   const chevron = header.querySelector('.month-chevron');
   chevron.classList.toggle('open', days.classList.toggle('open'));
 }
-
 function toggleDayDetails(row) {
   const details = row.nextElementSibling;
   if (details && details.classList.contains('day-details')) details.classList.toggle('open');
 }
-
 function changeYear(delta) { currentYear += delta; renderCalendar(); }
-
-// ── PDF / Download ──
 function printAsPDF() {
-  // Expand all months and days for print
   document.querySelectorAll('.month-days').forEach(el => el.classList.add('open'));
   document.querySelectorAll('.day-details').forEach(el => el.classList.add('open'));
   window.print();
 }
 
-function downloadHTML() {
-  const html = document.documentElement.outerHTML;
-  const blob = new Blob([html], { type: 'text/html' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `ev-profit-tracker-${new Date().toISOString().slice(0,10)}.html`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-// Close modal on overlay click
 document.getElementById('editModal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
+
+document.getElementById('chargeDate').value = dateToStr(todayDate);
+
+renderWeek();
+renderSessions();
 </script>
 </body>
 </html>
