@@ -372,8 +372,6 @@
     </div>
   </div>
 
-
-
   <!-- Monthly calendar accordions -->
   <div id="calBody"></div>
 
@@ -448,6 +446,18 @@ function getWeekDates(offset) {
     const d = new Date(base);
     d.setDate(d.getDate() + i);
     days.push(d);
+  }
+  return days;
+}
+
+// Returns the 7 date strings for the current (real) week (Mon–Sun)
+function getCurrentWeekDates() {
+  const base = getMondayOf(todayDate);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() + i);
+    days.push(dateToStr(d));
   }
   return days;
 }
@@ -800,8 +810,22 @@ function renderCalendar() {
 
   const allTime   = charges.reduce((s,c) => s+(c.cost||0), 0);
   const allSess   = charges.length;
-  const yearTotal = Object.values(byMonth).reduce((s,m) => s+m.total, 0);
-  const yearEarn  = Object.values(byMonth).reduce((s,m) => s+(m.earnings||0), 0);
+
+  // ── CURRENT WEEK ONLY (metric card 2) ──────────────────────────────────────
+  const currentWeekDates = getCurrentWeekDates();
+  let curWeekEarn = 0, curWeekEv = 0;
+  currentWeekDates.forEach(ds => {
+    curWeekEarn += (dayStats[ds] && dayStats[ds].earnings) || 0;
+    curWeekEv   += charges.filter(c => c.date === ds).reduce((s,c) => s + c.cost, 0);
+  });
+  const curWeekProfit = curWeekEarn - curWeekEv;
+  // Week label e.g. "12–18 May"
+  const cwStart = new Date(currentWeekDates[0] + 'T00:00:00');
+  const cwEnd   = new Date(currentWeekDates[6] + 'T00:00:00');
+  const cwLabel = cwStart.getMonth() === cwEnd.getMonth()
+    ? `${cwStart.getDate()}–${cwEnd.getDate()} ${MONTHS[cwStart.getMonth()]}`
+    : `${cwStart.getDate()} ${MONTHS[cwStart.getMonth()]}–${cwEnd.getDate()} ${MONTHS[cwEnd.getMonth()]}`;
+  // ───────────────────────────────────────────────────────────────────────────
 
   const nowMonth = new Date().getMonth();
   const monthData = byMonth[nowMonth] || { earnings: 0, total: 0 };
@@ -818,7 +842,7 @@ function renderCalendar() {
 
   document.getElementById('calMetrics').innerHTML = `
     <div class="cal-metric" style="background:#fff7ed;border-color:rgba(234,88,12,0.20);border-left:4px solid #ea580c;"><div class="lbl" style="color:#9a3412;">All-time EV spend</div><div class="val" style="color:#ea580c">£${allTime.toFixed(2)}</div><div class="sub" style="color:#c2410c;">${allSess} session${allSess !== 1 ? 's' : ''} total</div></div>
-    <div class="cal-metric" style="background:#f0fdf4;border-color:rgba(22,163,74,0.16);border-left:4px solid #16a34a;"><div class="lbl" style="color:#166534;">Weekly ${currentYear} earnings</div><div class="val" style="color:#15803d">£${yearEarn.toFixed(2)}</div><div class="sub" style="color:var(--text-muted);">${MONTHS_FULL[nowMonth]}</div><div class="sub" style="color:${(yearEarn - yearTotal) >= 0 ? '#7c3aed' : '#b91c1c'};font-weight:600;">Profit £${(yearEarn - yearTotal).toFixed(2)}</div></div>
+    <div class="cal-metric" style="background:#f0fdf4;border-color:rgba(22,163,74,0.16);border-left:4px solid #16a34a;"><div class="lbl" style="color:#166534;">This week's earnings</div><div class="val" style="color:#15803d">£${curWeekEarn.toFixed(2)}</div><div class="sub" style="color:var(--text-muted);">${cwLabel}</div><div class="sub" style="color:${curWeekProfit >= 0 ? '#7c3aed' : '#b91c1c'};font-weight:600;">Profit £${curWeekProfit.toFixed(2)}</div></div>
     <div class="cal-metric" style="background:#eff6ff;border-color:rgba(37,99,235,0.20);border-left:4px solid #2563eb;"><div class="lbl" style="color:#1e3a8a;">Monthly earn</div><div class="val" style="color:#1d4ed8">£${monthEarn.toFixed(2)}</div><div class="sub" style="color:var(--text-muted);">${MONTHS_FULL[nowMonth]}</div><div class="sub" style="color:${monthProfit >= 0 ? '#7c3aed' : '#b91c1c'};font-weight:600;">Profit £${monthProfit.toFixed(2)}</div></div>
     <div class="cal-metric" style="background:#f5f3ff;border-color:rgba(124,58,237,0.16);border-left:4px solid #7c3aed;"><div class="lbl" style="color:#5b21b6;">Peak month</div><div class="val" style="color:#6d28d9;font-size:15px;">${peakLabel}</div><div class="sub" style="color:var(--orange);font-weight:600;">${peakSub}</div></div>
   `;
@@ -897,50 +921,6 @@ function renderCalendar() {
     </div>`;
   }
   document.getElementById('calBody').innerHTML = html || `<div class="no-data">No charging records for ${currentYear} yet.</div>`;
-}
-
-function renderMonthlyTable(year, byMonth) {
-  const months = Object.keys(byMonth).map(Number).sort((a,b)=>a-b);
-  if (months.length === 0) {
-    document.getElementById('calMonthlyTableBody').innerHTML = `<div style="padding:16px 18px;font-size:12px;color:var(--text-muted);text-align:center;">No data for ${year} yet.</div>`;
-    document.getElementById('calMonthlyFooter').innerHTML = '';
-    return;
-  }
-  let totEarn = 0, totEv = 0, totSess = 0;
-  const rows = months.map(mi => {
-    const d = byMonth[mi];
-    const earn = d.earnings || 0;
-    const ev   = d.total    || 0;
-    const sess = d.sessions || 0;
-    const profit = earn - ev;
-    totEarn += earn; totEv += ev; totSess += sess;
-    const profCls = profit >= 0 ? 'profit-pos' : 'profit-neg';
-    const col = MONTH_COLOURS[mi];
-    return `<div class="cal-weekly-table-row" style="grid-template-columns:100px 1fr 1fr 1fr 1fr;">
-      <div class="cwtd" style="justify-content:flex-start;gap:6px;">
-        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col.solid};flex-shrink:0;"></span>
-        <span style="color:#1e293b;font-weight:700;font-size:11px;">${MONTHS_FULL[mi]}</span>
-      </div>
-      <div class="cwtd earn-val">${fmt(earn)}</div>
-      <div class="cwtd ev-val">${fmt(ev)}</div>
-      <div class="cwtd ${profCls}">${fmt(profit)}</div>
-      <div class="cwtd hours-val">${sess > 0 ? sess : '—'}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('calMonthlyTableBody').innerHTML = rows;
-  if (months.length > 1) {
-    const totProfit = totEarn - totEv;
-    const profCls = totProfit >= 0 ? 'profit-pos' : 'profit-neg';
-    document.getElementById('calMonthlyFooter').innerHTML = `
-      <div class="cwtf" style="text-align:left;">Total</div>
-      <div class="cwtf earn-val">${fmt(totEarn)}</div>
-      <div class="cwtf ev-val">${fmt(totEv)}</div>
-      <div class="cwtf ${profCls}">${fmt(totProfit)}</div>
-      <div class="cwtf">${totSess}</div>
-    `;
-  } else {
-    document.getElementById('calMonthlyFooter').innerHTML = '';
-  }
 }
 
 function toggleMonth(header) {
