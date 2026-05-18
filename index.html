@@ -67,7 +67,7 @@
   .week-day-input.today-input { border-color: rgba(37,99,235,0.35); background: #eff6ff; }
   .week-day-input.has-value { border-color: rgba(21,128,61,0.3); }
   .week-day-date { font-size: 9px; color: #1e293b; font-family: 'DM Mono', monospace; font-weight: 700; }
-  .week-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+  .week-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
   .week-stat { background: var(--bg-input); border-radius: var(--radius-sm); padding: 10px 12px; }
   .week-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
   .week-stat-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text-primary); }
@@ -83,10 +83,10 @@
   .week-hours-input::-webkit-outer-spin-button, .week-hours-input::-webkit-inner-spin-button { -webkit-appearance: none; }
   .week-hours-input:focus { border-color: var(--border-focus); }
   .week-hours-sub { font-size: 11px; color: var(--text-muted); }
-  .clear-btn { width: 100%; padding: 10px; background: transparent; border: 1px solid rgba(220,38,38,0.25); border-radius: var(--radius-sm); color: var(--red); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 14px; transition: background 0.15s; }
+  .clear-btn { width: 100%; padding: 10px; background: transparent; border: 1px solid rgba(220,38,38,0.25); border-radius: var(--radius-sm); color: var(--red); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
   .clear-btn:hover { background: var(--red-dim); }
   .charge-card { background: var(--bg-card); border: 0.5px solid var(--border); }
-  .action-row { display: flex; gap: 8px; margin-bottom: 18px; }
+  .action-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .pdf-btn { flex: 1; padding: 10px 14px; background: #f0fdf4; border: 1px solid rgba(21,128,61,0.25); border-radius: var(--radius-sm); color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.15s; }
   .pdf-btn:hover { background: #dcfce7; }
   .cal-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr)); gap: 10px; margin-bottom: 24px; }
@@ -94,7 +94,7 @@
   .cal-metric .lbl { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
   .cal-metric .val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; }
   .cal-metric .sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
-  .year-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .year-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
   .year-nav button { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 14px; padding: 6px 14px; cursor: pointer; }
   .year-nav button:hover { background: var(--bg-input); }
   .year-label { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; }
@@ -303,7 +303,6 @@
       <div class="week-days-grid" id="weekDaysGrid"></div>
       <div class="week-summary">
         <div class="week-stat ws-green"><div class="week-stat-label">Week total</div><div class="week-stat-val" id="weekTotal">£0.00</div></div>
-        <div class="week-stat ws-blue"><div class="week-stat-label">Week profit</div><div class="week-stat-val" id="weekProfit">£0.00</div></div>
         <div class="week-stat"><div class="week-stat-label">Per hour</div><div class="week-stat-val" id="weekPerHour">—</div></div>
       </div>
       <div class="week-hours-row">
@@ -357,8 +356,9 @@
   </div>
   <div class="cal-metrics" id="calMetrics"></div>
 
+  <!-- Weekly breakdown -->
   <div style="margin-bottom:6px;">
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Weekly breakdown — <span id="calWeeklyYear"></span></div>
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Weekly breakdown</div>
     <div class="cal-weekly-table">
       <div class="cal-weekly-table-header">
         <div class="cwth" style="text-align:left;">Week</div>
@@ -372,33 +372,19 @@
     </div>
   </div>
 
-  <div style="margin-bottom:6px;margin-top:8px;">
-    <div style="font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Monthly breakdown — <span id="calMonthlyYear"></span></div>
-    <div class="cal-weekly-table">
-      <div class="cal-weekly-table-header" style="grid-template-columns:100px 1fr 1fr 1fr 1fr;">
-        <div class="cwth" style="text-align:left;">Month</div>
-        <div class="cwth">Earnings</div>
-        <div class="cwth">EV spend</div>
-        <div class="cwth">Net profit</div>
-        <div class="cwth">Sessions</div>
-      </div>
-      <div id="calMonthlyTableBody"></div>
-      <div class="cal-weekly-footer" id="calMonthlyFooter" style="grid-template-columns:100px 1fr 1fr 1fr 1fr;"></div>
-    </div>
-  </div>
 
+
+  <!-- Monthly calendar accordions -->
+  <div id="calBody"></div>
+
+  <!-- Save PDF + Clear all -->
   <div class="action-row" style="margin-top:18px;">
     <button class="pdf-btn" onclick="printAsPDF()">🖨️ Save as PDF</button>
   </div>
   <div class="card" style="margin-bottom:18px;">
     <button class="clear-btn" onclick="clearAll()">Clear all EV records</button>
   </div>
-  <div class="year-nav">
-    <button onclick="changeYear(-1)">&#8592;</button>
-    <span class="year-label" id="yearLabel"></span>
-    <button onclick="changeYear(1)">&#8594;</button>
-  </div>
-  <div id="calBody"></div>
+
 </div>
 
 <script>
@@ -517,11 +503,8 @@ function updateWeekSummary(days, wKey) {
     weekEv   += charges.filter(c => c.date === ds).reduce((s,c) => s + c.cost, 0);
   });
   const hours  = parseFloat(document.getElementById('weekHours').value) || 0;
-  const profit = weekEarn - weekEv;
   document.getElementById('weekTotal').textContent  = fmt(weekEarn);
-  document.getElementById('weekProfit').textContent = fmt(profit);
-  document.getElementById('weekProfit').style.color = profit >= 0 ? 'var(--green)' : 'var(--red)';
-  document.getElementById('weekPerHour').textContent = hours > 0 ? fmt(profit / hours) : '—';
+  document.getElementById('weekPerHour').textContent = hours > 0 ? fmt((weekEarn - weekEv) / hours) : '—';
   document.getElementById('weekHoursSub').textContent = weekEv > 0 ? `EV: ${fmt(weekEv)}` : '';
 }
 
@@ -557,6 +540,12 @@ function autoFillMilesAfter() {
 }
 document.getElementById("milesBefore").addEventListener("input", autoFillMilesAfter);
 document.getElementById("mileage").addEventListener("input", autoFillMilesAfter);
+document.getElementById("milesAfter").addEventListener("input", function() {
+  const before = parseFloat(document.getElementById("milesBefore").value);
+  const after  = parseFloat(document.getElementById("milesAfter").value);
+  if (!isNaN(before) && !isNaN(after) && after > before)
+    document.getElementById("mileage").value = Math.round(after - before);
+});
 
 function findChargeIndex(date, nth) {
   let count = -1;
@@ -586,7 +575,6 @@ function renderSessions() {
 
 function removeCharge(idx) {
   if (idx < 0) return;
-
   const charge = charges[idx];
   const confirmed = confirm(
     `Delete this charging session?\n\n` +
@@ -596,9 +584,7 @@ function removeCharge(idx) {
       ? `Battery: ${charge.battBefore}% → ${charge.battAfter}%`
       : ''}`
   );
-
   if (!confirmed) return;
-
   charges.splice(idx, 1);
   try { localStorage.setItem("ev_charges", JSON.stringify(charges)); } catch(e) {}
   renderSessions();
@@ -659,6 +645,12 @@ function openSessionEdit(idx) {
   }
   document.getElementById('m_mb').addEventListener('input', modalAutoMiles);
   document.getElementById('m_miles').addEventListener('input', modalAutoMiles);
+  document.getElementById('m_ma').addEventListener('input', function() {
+    const mb = parseFloat(document.getElementById('m_mb').value);
+    const ma = parseFloat(document.getElementById('m_ma').value);
+    if (!isNaN(mb) && !isNaN(ma) && ma > mb)
+      document.getElementById('m_miles').value = Math.round(ma - mb);
+  });
   document.getElementById('modalSaveBtn').onclick = saveSessionEdit;
   document.getElementById('editModal').classList.add('open');
 }
@@ -750,7 +742,6 @@ function buildYearData(year) {
 function getDaysInMonth(year, month) { return new Date(year, month+1, 0).getDate(); }
 
 function renderWeeklyTable(year, byDay) {
-  document.getElementById('calWeeklyYear').textContent = year;
   const weekMap = {};
   Object.keys(byDay).forEach(date => {
     const [y] = date.split('-').map(Number);
@@ -788,7 +779,6 @@ function renderWeeklyTable(year, byDay) {
     </div>`;
   }).join('');
   document.getElementById('calWeeklyTableBody').innerHTML = rows;
-
   if (sortedWeeks.length > 1) {
     const totalProfit = totalEarn - totalEv;
     const profCls = totalProfit >= 0 ? 'profit-pos' : 'profit-neg';
@@ -806,14 +796,18 @@ function renderWeeklyTable(year, byDay) {
 
 function renderCalendar() {
   const { byMonth, byDay } = buildYearData(currentYear);
-  document.getElementById('yearLabel').textContent = currentYear;
   renderWeeklyTable(currentYear, byDay);
 
   const allTime   = charges.reduce((s,c) => s+(c.cost||0), 0);
   const allSess   = charges.length;
   const yearTotal = Object.values(byMonth).reduce((s,m) => s+m.total, 0);
   const yearEarn  = Object.values(byMonth).reduce((s,m) => s+(m.earnings||0), 0);
-  const yearProfit = yearEarn - yearTotal;
+
+  const nowMonth = new Date().getMonth();
+  const monthData = byMonth[nowMonth] || { earnings: 0, total: 0 };
+  const monthEarn = monthData.earnings || 0;
+  const monthProfit = monthEarn - (monthData.total || 0);
+
   const peakEntry = Object.entries(byMonth).reduce((a,[k,v]) => v.total > (a[1]?.total||0) ? [k,v] : a, [null,{total:0}]);
   let peakLabel = '—', peakSub = '';
   if (peakEntry[0] != null && peakEntry[1].total > 0) {
@@ -823,9 +817,9 @@ function renderCalendar() {
   }
 
   document.getElementById('calMetrics').innerHTML = `
-    <div class="cal-metric" style="background:#fff7ed;border-color:rgba(234,88,12,0.20);border-left:4px solid #ea580c;"><div class="lbl" style="color:#9a3412;">All-time EV spend</div><div class="val" style="color:#ea580c">£${allTime.toFixed(2)}</div><div class="sub" style="color:#c2410c;">${allSess} sessions total</div></div>
-    <div class="cal-metric" style="background:#f0fdf4;border-color:rgba(22,163,74,0.16);border-left:4px solid #16a34a;"><div class="lbl" style="color:#166534;">${currentYear} earnings</div><div class="val" style="color:#15803d">£${yearEarn.toFixed(2)}</div></div>
-    <div class="cal-metric" style="background:#eff6ff;border-color:rgba(37,99,235,0.20);border-left:4px solid #2563eb;"><div class="lbl" style="color:#1e3a8a;">${currentYear} profits</div><div class="val" style="color:#1d4ed8">£${yearProfit.toFixed(2)}</div></div>
+    <div class="cal-metric" style="background:#fff7ed;border-color:rgba(234,88,12,0.20);border-left:4px solid #ea580c;"><div class="lbl" style="color:#9a3412;">All-time EV spend</div><div class="val" style="color:#ea580c">£${allTime.toFixed(2)}</div><div class="sub" style="color:#c2410c;">${allSess} session${allSess !== 1 ? 's' : ''} total</div></div>
+    <div class="cal-metric" style="background:#f0fdf4;border-color:rgba(22,163,74,0.16);border-left:4px solid #16a34a;"><div class="lbl" style="color:#166534;">Weekly ${currentYear} earnings</div><div class="val" style="color:#15803d">£${yearEarn.toFixed(2)}</div><div class="sub" style="color:var(--text-muted);">${MONTHS_FULL[nowMonth]}</div><div class="sub" style="color:${(yearEarn - yearTotal) >= 0 ? '#7c3aed' : '#b91c1c'};font-weight:600;">Profit £${(yearEarn - yearTotal).toFixed(2)}</div></div>
+    <div class="cal-metric" style="background:#eff6ff;border-color:rgba(37,99,235,0.20);border-left:4px solid #2563eb;"><div class="lbl" style="color:#1e3a8a;">Monthly earn</div><div class="val" style="color:#1d4ed8">£${monthEarn.toFixed(2)}</div><div class="sub" style="color:var(--text-muted);">${MONTHS_FULL[nowMonth]}</div><div class="sub" style="color:${monthProfit >= 0 ? '#7c3aed' : '#b91c1c'};font-weight:600;">Profit £${monthProfit.toFixed(2)}</div></div>
     <div class="cal-metric" style="background:#f5f3ff;border-color:rgba(124,58,237,0.16);border-left:4px solid #7c3aed;"><div class="lbl" style="color:#5b21b6;">Peak month</div><div class="val" style="color:#6d28d9;font-size:15px;">${peakLabel}</div><div class="sub" style="color:var(--orange);font-weight:600;">${peakSub}</div></div>
   `;
 
@@ -903,11 +897,9 @@ function renderCalendar() {
     </div>`;
   }
   document.getElementById('calBody').innerHTML = html || `<div class="no-data">No charging records for ${currentYear} yet.</div>`;
-  renderMonthlyTable(currentYear, byMonth);
 }
 
 function renderMonthlyTable(year, byMonth) {
-  document.getElementById('calMonthlyYear').textContent = year;
   const months = Object.keys(byMonth).map(Number).sort((a,b)=>a-b);
   if (months.length === 0) {
     document.getElementById('calMonthlyTableBody').innerHTML = `<div style="padding:16px 18px;font-size:12px;color:var(--text-muted);text-align:center;">No data for ${year} yet.</div>`;
